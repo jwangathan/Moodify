@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 require('express-async-errors');
 const usersRouter = require('./controllers/users');
+const loginRouter = require('./controllers/login');
 
 const config = require('./utils/config');
 const logger = require('./utils/logger');
@@ -31,6 +32,7 @@ app.use(
 	})
 );
 
+app.use('/api/login', loginRouter);
 app.use('/api/users', usersRouter);
 
 module.exports = app;

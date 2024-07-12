@@ -1,4 +1,4 @@
-const loginRouter = require('express').Router;
+const loginRouter = require('express').Router();
 
 const generateCode = async () => {
 	const possible =
@@ -22,17 +22,17 @@ const generateCode = async () => {
 	return { code_verifier, code_challenge_base64 };
 };
 
-loginRouter.get('/login', (req, res) => {
+loginRouter.get('/', (req, res) => {
 	const { code_verifier, code_challenge } = generateCode();
 	req.session.codeVerifier = code_verifier;
-	const authUrl = new URL(authorizationEndpoint);
+	const authUrl = new URL(process.env.AUTH_ENDPOINT);
 	const params = {
 		response_type: 'code',
-		client_id: clientId,
-		scope: scope,
+		client_id: process.env.CLIENT_ID,
+		scope: process.env.SCOPE,
 		code_challenge_method: 'S256',
-		code_challenge: code_challenge_base64,
-		redirect_uri: redirectUrl,
+		code_challenge: code_challenge,
+		redirect_uri: process.env.REDIRECT_URI,
 	};
 
 	authUrl.search = new URLSearchParams(params).toString();
