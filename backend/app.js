@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const mongoose = require('mongoose');
 const app = express();
 require('express-async-errors');
@@ -21,6 +22,14 @@ mongoose
 
 app.use(express.static('dist'));
 app.use(express.json());
+app.use(
+	session({
+		secret: process.env.SECRET,
+		resave: false,
+		saveUninitialized: true,
+		cookie: {},
+	})
+);
 
 app.use('/api/users', usersRouter);
 
