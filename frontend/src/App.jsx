@@ -1,0 +1,19 @@
+import { Routes, Route } from 'react-router-dom';
+import StartPage from './components/StartPage';
+import HomePage from './components/HomePage';
+import QuestionPage from './components/QuestionPage';
+import PlaylistPage from './components/PlaylistPage';
+
+function App() {
+	return (
+		<div>
+			<Routes>
+				<Route exact path="/" element={<HomePage />} />
+				<Route exact path="/survey" element={<QuestionPage />} />
+				<Route exact path="/playlist" element={<PlaylistPage />} />
+			</Routes>
+		</div>
+	);
+}
+
+export default App;
