@@ -1,14 +1,11 @@
-import { useEffect } from 'react';
-import { redirectToSpotifyAuthorize } from '../services/authorization_pkce';
 const HomePage = () => {
-	useEffect(() => {
-		const urlParams = new URLSearchParams(window.location.search);
-		let code = urlParams.get('code');
-	});
+	const handleLogin = async () => {
+		window.location.href = 'http://localhost:3001/auth/login';
+	};
 
 	return (
 		<div>
-			<button onClick={redirectToSpotifyAuthorize}> login </button>
+			<button onClick={handleLogin}> login </button>
 		</div>
 	);
 };

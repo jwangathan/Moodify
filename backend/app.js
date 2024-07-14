@@ -3,7 +3,7 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const app = express();
 require('express-async-errors');
-const usersRouter = require('./controllers/users');
+const cors = require('cors');
 const loginRouter = require('./controllers/login');
 
 const config = require('./utils/config');
@@ -21,6 +21,7 @@ mongoose
 		logger.error('error.connecting to MongoDB:', error.message);
 	});
 
+app.use(cors());
 app.use(express.static('dist'));
 app.use(express.json());
 app.use(
@@ -28,11 +29,9 @@ app.use(
 		secret: process.env.SECRET,
 		resave: false,
 		saveUninitialized: true,
-		cookie: {},
 	})
 );
 
-app.use('/api/login', loginRouter);
-app.use('/api/users', usersRouter);
+app.use('/auth', loginRouter);
 
 module.exports = app;
