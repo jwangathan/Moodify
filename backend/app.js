@@ -32,6 +32,6 @@ app.use(
 	})
 );
 
-app.use('/auth', loginRouter);
+app.use('/api/auth', loginRouter);
 
 module.exports = app;

@@ -33,10 +33,10 @@ loginRouter.get('/login', async (req, res) => {
 		scope: process.env.SCOPE,
 		code_challenge_method: 'S256',
 		code_challenge: code_challenge_base64,
-		redirect_uri: process.env.REDIRECT_URI,
+		redirect_uri: `${process.env.SERVER_URL}/api/auth/callback`,
 	};
 	authUrl.search = new URLSearchParams(params).toString();
-	res.redirect(authUrl.toString());
+	res.send(authUrl.toString());
 });
 
 loginRouter.get('/callback', (req, res) => {
@@ -51,7 +51,7 @@ loginRouter.get('/callback', (req, res) => {
 		client_id: process.env.CLIENT_ID,
 		grant_type: 'authorization_code',
 		code: code,
-		redirect_uri: process.env.REDIRECT_URI,
+		redirect_uri: `${process.env.SERVER_URL}/api/auth/callback`,
 		code_verifier: code_verifier,
 	});
 
@@ -74,11 +74,18 @@ loginRouter.get('/callback', (req, res) => {
 
 					await User.findOneAndUpdate(
 						{ spotifyId },
-						{ accessToken: access_token, refreshToken: refresh_token },
+						{
+							spotifyId,
+							accessToken: access_token,
+							refreshToken: refresh_token,
+							expiresIn: expires_in,
+						},
 						{ new: true, upsert: true }
 					);
 
-					res.redirect(`http://localhost:5173/survey?token=${access_token}`);
+					res.redirect(
+						`${process.env.CLIENT_URL}/survey?token=${access_token}`
+					);
 				})
 				.catch((error) => {
 					res.status(500).send(error.response.data);

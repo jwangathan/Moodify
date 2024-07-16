@@ -1,6 +1,13 @@
+import axios from 'axios';
 const HomePage = () => {
 	const handleLogin = async () => {
-		window.location.href = 'http://localhost:3001/auth/login';
+		try {
+			const res = await axios.get('/api/auth/login');
+			console.log(res.data);
+			window.location.href = res.data;
+		} catch (error) {
+			console.log('Error during login: ', error);
+		}
 	};
 
 	return (
