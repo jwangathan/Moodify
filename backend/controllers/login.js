@@ -33,16 +33,15 @@ loginRouter.get('/login', async (req, res) => {
 		scope: process.env.SCOPE,
 		code_challenge_method: 'S256',
 		code_challenge: code_challenge_base64,
-		redirect_uri: `${process.env.SERVER_URL}/api/auth/callback`,
+		redirect_uri: `${process.env.CLIENT_URL}/callback`,
 	};
 	authUrl.search = new URLSearchParams(params).toString();
 	res.send(authUrl.toString());
 });
 
-loginRouter.get('/callback', (req, res) => {
+loginRouter.get('/callback', async (req, res) => {
 	const code = req.query.code;
 	const code_verifier = req.session.codeVerifier;
-
 	if (!code_verifier) {
 		return res.status(400).send('Code verifier not found in session');
 	}
@@ -51,49 +50,44 @@ loginRouter.get('/callback', (req, res) => {
 		client_id: process.env.CLIENT_ID,
 		grant_type: 'authorization_code',
 		code: code,
-		redirect_uri: `${process.env.SERVER_URL}/api/auth/callback`,
+		redirect_uri: `${process.env.CLIENT_URL}/callback`,
 		code_verifier: code_verifier,
 	});
 
 	const config = {
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	};
-
-	axios
-		.post('https://accounts.spotify.com/api/token', body, config)
-		.then((response) => {
-			const { access_token, refresh_token, expires_in } = response.data;
-			axios
-				.get('https://api.spotify.com/v1/me', {
-					headers: {
-						Authorization: `Bearer ${access_token}`,
-					},
-				})
-				.then(async (response) => {
-					const spotifyId = response.data.id;
-
-					await User.findOneAndUpdate(
-						{ spotifyId },
-						{
-							spotifyId,
-							accessToken: access_token,
-							refreshToken: refresh_token,
-							expiresIn: expires_in,
-						},
-						{ new: true, upsert: true }
-					);
-
-					res.redirect(
-						`${process.env.CLIENT_URL}/survey?token=${access_token}`
-					);
-				})
-				.catch((error) => {
-					res.status(500).send(error.response.data);
-				});
-		})
-		.catch((error) => {
-			res.status(500).send(error.response.data);
+	try {
+		const tokenRes = await axios.post(
+			'https://accounts.spotify.com/api/token',
+			body,
+			config
+		);
+		const { access_token, refresh_token, expires_in, scope } = tokenRes.data;
+		const userRes = await axios.get('https://api.spotify.com/v1/me', {
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
 		});
+		const spotifyId = userRes.data.id;
+		await User.findOneAndUpdate(
+			{ spotifyId },
+			{
+				spotifyId,
+				accessToken: access_token,
+				refreshToken: refresh_token,
+				expiresIn: expires_in,
+				scope: scope,
+			},
+			{ new: true, upsert: true }
+		);
+		res.json({ token: access_token });
+		// res.redirect(
+		// 	`${process.env.CLIENT_URL}/survey?token=${access_token}`
+		// );
+	} catch (error) {
+		res.status(500).json({ message: 'Internal server error' });
+	}
 });
 
 module.exports = loginRouter;
