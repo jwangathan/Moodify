@@ -26,11 +26,11 @@ const generateCode = async () => {
 loginRouter.get('/login', async (req, res) => {
 	const { code_verifier, code_challenge_base64 } = await generateCode();
 	req.session.codeVerifier = code_verifier;
-	const authUrl = new URL(process.env.AUTH_ENDPOINT);
+	const authUrl = new URL('https://accounts.spotify.com/authorize');
 	const params = {
 		response_type: 'code',
 		client_id: process.env.CLIENT_ID,
-		scope: process.env.SCOPE,
+		scope: 'user-read-private user-read-email',
 		code_challenge_method: 'S256',
 		code_challenge: code_challenge_base64,
 		redirect_uri: `${process.env.CLIENT_URL}/callback`,
@@ -63,13 +63,36 @@ loginRouter.get('/callback', async (req, res) => {
 			body,
 			config
 		);
-		const { access_token, refresh_token, expires_in, scope } = tokenRes.data;
+		const { access_token, refresh_token, expires_in } = tokenRes.data;
 		const userRes = await axios.get('https://api.spotify.com/v1/me', {
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
 		});
-		const spotifyId = userRes.data.id;
+		const { id: spotifyId, display_name, images } = userRes.data;
+		const profileImage = images.length > 0 ? images[0].url : '';
+
+		// const userArtists = await axios.get(
+		// 	'https://api.spotify.com/v1/me/top/artists',
+		// 	{
+		// 		headers: { Authorization: `Bearer ${access_token}` },
+		// 		params: { limit: 30 },
+		// 	}
+		// );
+
+		// const topArtists = userArtists.data.items.map((artist) => artist.name);
+		// const topGenres = new Set(
+		// 	userArtists.data.items.map((artist) => artist.genres)
+		// );
+
+		// const userTracks = await axios.get(
+		// 	'https://api.spotify.com/v1/me/top/tracks',
+		// 	{
+		// 		headers: { Authorization: `Bearer ${access_token}` },
+		// 		params: { limit: 50 },
+		// 	}
+		// );
+
 		await User.findOneAndUpdate(
 			{ spotifyId },
 			{
@@ -77,14 +100,21 @@ loginRouter.get('/callback', async (req, res) => {
 				accessToken: access_token,
 				refreshToken: refresh_token,
 				expiresIn: expires_in,
-				scope: scope,
+				profileImage: profileImage,
+				displayName: display_name,
 			},
 			{ new: true, upsert: true }
 		);
-		res.json({ token: access_token });
-		// res.redirect(
-		// 	`${process.env.CLIENT_URL}/survey?token=${access_token}`
-		// );
+		res.json({
+			token: access_token,
+			refreshToken: refresh_token,
+			expiresIn: expires_in,
+			user: {
+				spotifyId,
+				displayName: display_name,
+				profileImage,
+			},
+		});
 	} catch (error) {
 		res.status(500).json({ message: 'Internal server error' });
 	}

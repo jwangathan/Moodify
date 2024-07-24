@@ -5,7 +5,11 @@ const userSchema = new mongoose.Schema({
 	accessToken: String,
 	refreshToken: String,
 	expiresIn: Number,
-	journalLogs: [{ type: String }],
+	displayName: String,
+	profileImage: String,
+	topArtist: [String],
+	topTracks: [{ name: String, id: String }],
+	journalLogs: [String],
 });
 
 userSchema.set('toJSON', {
@@ -13,6 +17,7 @@ userSchema.set('toJSON', {
 		returnedObject.id = returnedObject._id.toString();
 		delete returnedObject._id;
 		delete returnedObject.__v;
+		delete returnedObject.passwordhash;
 	},
 });
 

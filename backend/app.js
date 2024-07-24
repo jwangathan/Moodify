@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const app = express();
@@ -22,7 +23,7 @@ mongoose
 	});
 
 app.use(cors());
-app.use(express.static('dist'));
+app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.json());
 app.use(
 	session({
@@ -33,5 +34,9 @@ app.use(
 );
 
 app.use('/api/auth', loginRouter);
+
+app.get('/*', (req, res) => {
+	res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 module.exports = app;
