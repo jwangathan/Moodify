@@ -72,27 +72,6 @@ loginRouter.get('/callback', async (req, res) => {
 		const { id: spotifyId, display_name, images } = userRes.data;
 		const profileImage = images.length > 0 ? images[0].url : '';
 
-		// const userArtists = await axios.get(
-		// 	'https://api.spotify.com/v1/me/top/artists',
-		// 	{
-		// 		headers: { Authorization: `Bearer ${access_token}` },
-		// 		params: { limit: 30 },
-		// 	}
-		// );
-
-		// const topArtists = userArtists.data.items.map((artist) => artist.name);
-		// const topGenres = new Set(
-		// 	userArtists.data.items.map((artist) => artist.genres)
-		// );
-
-		// const userTracks = await axios.get(
-		// 	'https://api.spotify.com/v1/me/top/tracks',
-		// 	{
-		// 		headers: { Authorization: `Bearer ${access_token}` },
-		// 		params: { limit: 50 },
-		// 	}
-		// );
-
 		await User.findOneAndUpdate(
 			{ spotifyId },
 			{

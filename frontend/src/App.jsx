@@ -5,13 +5,14 @@ import PlaylistPage from './components/PlaylistPage';
 import CallbackPage from './components/CallbackPage';
 import Navigation from './components/Navigation';
 import Notification from './components/Notification';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { setUser } from './reducers/authReducer';
+import { Div } from './components/DivStyles';
 
 function App() {
 	const dispatch = useDispatch();
-
+	const currUser = useSelector((state) => state.authentication);
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedUser');
 		if (loggedUserJSON) {
@@ -20,15 +21,22 @@ function App() {
 		}
 	}, [dispatch]);
 	return (
-		<div className="container">
-			<Navigation />
+		<div>
+			{currUser && <Navigation />}
 			<Notification />
-			<Routes>
-				<Route exact path="/" element={<HomePage />} />
-				<Route exact path="/survey" element={<QuestionPage />} />
-				<Route exact path="/playlist" element={<PlaylistPage />} />
-				<Route exact path="/callback" element={<CallbackPage />} />
-			</Routes>
+			<Div>
+				{currUser ? (
+					<Routes>
+						<Route exact path="/" element={<QuestionPage />} />
+						<Route exact path="/playlist" element={<PlaylistPage />} />
+					</Routes>
+				) : (
+					<Routes>
+						<Route exact path="/" element={<HomePage />} />
+						<Route exact path="/callback" element={<CallbackPage />} />
+					</Routes>
+				)}
+			</Div>
 		</div>
 	);
 }
