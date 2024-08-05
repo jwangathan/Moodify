@@ -5,10 +5,11 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../reducers/authReducer';
 import { Spinner } from 'react-bootstrap';
 
-const CallbackPage = () => {
+const LoginCallbackPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -23,6 +24,7 @@ const CallbackPage = () => {
 				console.log(error);
 			}
 		};
+
 		fetchData();
 	}, [location.search, navigate, dispatch]);
 
@@ -41,4 +43,4 @@ const CallbackPage = () => {
 	);
 };
 
-export default CallbackPage;
+export default LoginCallbackPage;

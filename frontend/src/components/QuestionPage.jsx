@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 const QuestionPage = () => {
 	const [step, setStep] = useState(1);
-	const [event, setEvent] = useState('');
-	const [mood, setMood] = useState('');
+	const [situation, setSituation] = useState('');
+	const [emotion, setEmotion] = useState('');
 	const navigate = useNavigate();
 
 	const handleInputChange = (e) => {
@@ -21,10 +21,9 @@ const QuestionPage = () => {
 			setStep(2);
 		} else if (step === 2) {
 			setStep(1);
-			navigate('/playlist', { state: { event, mood } });
-			setEvent('');
-			setMood('');
-			console.log('HELP');
+			navigate('/callback', { state: { playlist: true, situation, emotion } });
+			setSituation('');
+			setEmotion('');
 		}
 	};
 	return (
@@ -46,7 +45,7 @@ const QuestionPage = () => {
 			<form onSubmit={handleSubmit}>
 				<input
 					type="text"
-					value={step === 1 ? event : mood}
+					value={step === 1 ? situation : emotion}
 					onChange={handleInputChange}
 					required
 				/>

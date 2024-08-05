@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-	spotifyId: String,
+	spotifyId: { type: String, required: true, unique: true },
 	accessToken: String,
 	refreshToken: String,
 	expiresIn: Number,
@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
 	profileImage: String,
 	topArtist: [String],
 	topTracks: [{ name: String, id: String }],
-	journalLogs: [String],
+	chatHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }],
 });
 
 userSchema.set('toJSON', {

@@ -6,6 +6,7 @@ const app = express();
 require('express-async-errors');
 const cors = require('cors');
 const loginRouter = require('./controllers/login');
+const chatRouter = require('./controllers/chats');
 
 const config = require('./utils/config');
 const logger = require('./utils/logger');
@@ -34,6 +35,7 @@ app.use(
 );
 
 app.use('/api/auth', loginRouter);
+app.use('/api/chat', chatRouter);
 
 app.get('/*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'dist', 'index.html'));

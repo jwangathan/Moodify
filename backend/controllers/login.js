@@ -84,7 +84,7 @@ loginRouter.get('/callback', async (req, res) => {
 			},
 			{ new: true, upsert: true }
 		);
-		res.json({
+		res.status(200).json({
 			token: access_token,
 			refreshToken: refresh_token,
 			expiresIn: expires_in,

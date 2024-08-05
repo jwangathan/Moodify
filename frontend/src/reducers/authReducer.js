@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import userService from '../services/users';
 
 const authSlice = createSlice({
-	name: 'authentication',
+	name: 'auth',
 	initialState: null,
 	reducers: {
 		setUser(state, action) {
