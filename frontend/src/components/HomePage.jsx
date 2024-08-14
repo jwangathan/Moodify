@@ -1,4 +1,4 @@
-import { Div2, Div3, Div4 } from './DivStyles';
+import { CenteredComponent, Div3, Div4 } from './DivStyles';
 import { LoginButton } from './ButtonStyles';
 import loginService from '../services/auth';
 
@@ -14,11 +14,11 @@ const HomePage = () => {
 	};
 
 	return (
-		<Div2>
+		<CenteredComponent>
 			<Div3>Moodify</Div3>
 			<Div4>Using music to meet your mood goals</Div4>
 			<LoginButton onClick={handleLogin}>Login To Spotify</LoginButton>
-		</Div2>
+		</CenteredComponent>
 	);
 };
 

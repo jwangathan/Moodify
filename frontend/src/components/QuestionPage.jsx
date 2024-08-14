@@ -9,9 +9,9 @@ const QuestionPage = () => {
 
 	const handleInputChange = (e) => {
 		if (step === 1) {
-			setEvent(e.target.value);
+			setSituation(e.target.value);
 		} else if (step === 2) {
-			setMood(e.target.value);
+			setEmotion(e.target.value);
 		}
 	};
 	const handleSubmit = (e) => {
@@ -21,7 +21,9 @@ const QuestionPage = () => {
 			setStep(2);
 		} else if (step === 2) {
 			setStep(1);
-			navigate('/callback', { state: { playlist: true, situation, emotion } });
+			navigate('/playlist/callback', {
+				state: { playlist: true, situation, emotion },
+			});
 			setSituation('');
 			setEmotion('');
 		}

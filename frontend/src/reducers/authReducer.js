@@ -1,6 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import userService from '../services/users';
 
+/*
+state includes:
+token, refreshToken, expiresIn, user: {spotifyId, displayName, profileImage}, topArtists, topGenres, topTracks
+*/
 const authSlice = createSlice({
 	name: 'auth',
 	initialState: null,

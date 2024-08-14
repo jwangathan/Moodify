@@ -1,15 +1,17 @@
 import { Nav, Navbar, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../reducers/authReducer';
 
 const Navigation = () => {
-	const currUser = useSelector((state) => state.authentication);
+	const currUser = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const handleLogout = (event) => {
 		event.preventDefault();
 		console.log('logging out user', currUser.spotifyId);
+		navigate('/');
 		dispatch(logout());
 	};
 
@@ -20,7 +22,7 @@ const Navigation = () => {
 			<Navbar.Collapse id="responsive-navbar-nav">
 				<Nav.Link href="#" as="span">
 					<Link style={{ padding: 5 }} to="/">
-						Home
+						User Info
 					</Link>
 				</Nav.Link>
 				<Nav.Link href="#" as="span">

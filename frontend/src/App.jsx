@@ -8,8 +8,9 @@ import Notification from './components/Notification';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { setUser } from './reducers/authReducer';
-import { Div } from './components/DivStyles';
+import { Background } from './components/DivStyles';
 import PlaylistCallbackPage from './components/PlaylistCallbackPage';
+import UserPage from './components/UserPage';
 
 function App() {
 	const dispatch = useDispatch();
@@ -22,32 +23,23 @@ function App() {
 		}
 	}, [dispatch]);
 	return (
-		<div>
+		<Background>
 			{currUser && <Navigation />}
 			<Notification />
-			<Div>
-				{currUser ? (
-					<Routes>
-						<Route exact path="/" element={<QuestionPage />} />
-						<Route exact path="/playlist" element={<PlaylistPage />} />
-						<Route
-							exact
-							path="/playlist/callback"
-							element={<PlaylistCallbackPage currUser={currUser} />}
-						/>
-					</Routes>
-				) : (
-					<Routes>
-						<Route exact path="/" element={<HomePage />} />
-						<Route
-							exact
-							path="/auth/callback"
-							element={<LoginCallbackPage />}
-						/>
-					</Routes>
-				)}
-			</Div>
-		</div>
+			{currUser ? (
+				<Routes>
+					<Route path="/" element={<UserPage />} />
+					<Route path="/survey" element={<QuestionPage />} />
+					<Route path="/playlist" element={<PlaylistPage />} />
+					<Route path="/playlist/callback" element={<PlaylistCallbackPage />} />
+				</Routes>
+			) : (
+				<Routes>
+					<Route path="/" element={<HomePage />} />
+					<Route path="/auth/callback" element={<LoginCallbackPage />} />
+				</Routes>
+			)}
+		</Background>
 	);
 }
 

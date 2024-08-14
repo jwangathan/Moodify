@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useSelector } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
+import axios from 'axios';
 
-const PlaylistCallbackPage = ({ currUser }) => {
+const PlaylistCallbackPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const PlaylistCallbackPage = ({ currUser }) => {
 			}}
 		>
 			<Spinner animation="border" />
-			<span className="sr-only"> Logging in... </span>
+			<span className="sr-only"> Creating Playlist... </span>
 		</div>
 	);
 };

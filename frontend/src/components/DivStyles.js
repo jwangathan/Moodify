@@ -1,18 +1,25 @@
 import styled from 'styled-components';
 
-export const Div = styled.div`
+export const Background = styled.div`
 	background-image: radial-gradient(
 		circle,
 		rgba(238, 174, 202, 1) 0%,
 		rgba(148, 187, 233, 1) 100%
 	);
+	background-repeat: no-repeat;
+	background-size: cover;
+	min-height: 100vh;
+	min-width: 100vw;
+	overflow: hidden;
+`;
+
+export const CenteredComponent = styled.div`
 	flex-direction: column;
 	display: flex;
 	align-items: center;
 	text-align: center;
 	justify-content: center;
-	padding: 20px;
-	min-height: 100vh;
+	height: 80vh;
 `;
 
 export const Div2 = styled.div`

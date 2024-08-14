@@ -1,6 +1,7 @@
 const loginRouter = require('express').Router();
 const axios = require('axios');
 const User = require('../models/user');
+const baseURL = 'https://api.spotify.com/v1';
 
 const generateCode = async () => {
 	const possible =
@@ -23,17 +24,33 @@ const generateCode = async () => {
 	return { code_verifier, code_challenge_base64 };
 };
 
+const generateRandomString = (length) => {
+	let text = '';
+	const possible =
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for (let i = 0; i < length; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
+};
+
+const stateKey = 'spotify_auth_state';
+
 loginRouter.get('/login', async (req, res) => {
 	const { code_verifier, code_challenge_base64 } = await generateCode();
+	const state = generateRandomString(16);
+	res.cookie(stateKey, state);
 	req.session.codeVerifier = code_verifier;
 	const authUrl = new URL('https://accounts.spotify.com/authorize');
 	const params = {
 		response_type: 'code',
 		client_id: process.env.CLIENT_ID,
-		scope: 'user-read-private user-read-email',
+		scope:
+			'user-read-private user-read-email user-top-read playlist-modify-private playlist-modify-public',
+		state: state,
 		code_challenge_method: 'S256',
 		code_challenge: code_challenge_base64,
-		redirect_uri: `${process.env.CLIENT_URL}/callback`,
+		redirect_uri: `${process.env.CLIENT_URL}/auth/callback`,
 	};
 	authUrl.search = new URLSearchParams(params).toString();
 	res.send(authUrl.toString());
@@ -50,13 +67,14 @@ loginRouter.get('/callback', async (req, res) => {
 		client_id: process.env.CLIENT_ID,
 		grant_type: 'authorization_code',
 		code: code,
-		redirect_uri: `${process.env.CLIENT_URL}/callback`,
+		redirect_uri: `${process.env.CLIENT_URL}/auth/callback`,
 		code_verifier: code_verifier,
 	});
 
 	const config = {
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	};
+
 	try {
 		const tokenRes = await axios.post(
 			'https://accounts.spotify.com/api/token',
@@ -64,13 +82,50 @@ loginRouter.get('/callback', async (req, res) => {
 			config
 		);
 		const { access_token, refresh_token, expires_in } = tokenRes.data;
-		const userRes = await axios.get('https://api.spotify.com/v1/me', {
+
+		const userRes = await axios.get(`${baseURL}/me`, {
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
 		});
 		const { id: spotifyId, display_name, images } = userRes.data;
 		const profileImage = images.length > 0 ? images[0].url : '';
+
+		const topArtistsRes = await axios.get(`${baseURL}/me/top/artists`, {
+			headers: { Authorization: `Bearer ${access_token}` },
+			params: { limit: 20 },
+		});
+
+		const topArtists = topArtistsRes.data.items.map((artist) => ({
+			id: artist.id,
+			name: artist.name,
+			genres: artist.genres,
+		}));
+
+		const genreCounts = {};
+
+		topArtists.forEach((artist) => {
+			artist.genres.forEach((genre) => {
+				genreCounts[genre] = (genreCounts[genre] || 0) + 1;
+			});
+		});
+
+		const sortedGenres = Object.keys(genreCounts).sort(
+			(a, b) => genreCounts[b] - genreCounts[a]
+		);
+
+		const topGenres = sortedGenres.slice(0, 10);
+
+		const topTracksResponse = await axios.get(`${baseURL}/me/top/tracks`, {
+			headers: { Authorization: `Bearer ${access_token}` },
+			params: { limit: 10 },
+		});
+
+		const topTracks = topTracksResponse.data.items.map((track) => ({
+			id: track.id,
+			name: track.name,
+			artists: track.artists.map((artist) => artist.name),
+		}));
 
 		await User.findOneAndUpdate(
 			{ spotifyId },
@@ -81,9 +136,13 @@ loginRouter.get('/callback', async (req, res) => {
 				expiresIn: expires_in,
 				profileImage: profileImage,
 				displayName: display_name,
+				topArtists: topArtists.slice(0, 10),
+				topTracks,
+				topGenres,
 			},
 			{ new: true, upsert: true }
 		);
+
 		res.status(200).json({
 			token: access_token,
 			refreshToken: refresh_token,
@@ -93,9 +152,12 @@ loginRouter.get('/callback', async (req, res) => {
 				displayName: display_name,
 				profileImage,
 			},
+			topArtists: topArtists.slice(0, 10),
+			topTracks,
+			topGenres,
 		});
 	} catch (error) {
-		res.status(500).json({ message: 'Internal server error' });
+		res.status(500).json({ message: error });
 	}
 });
 

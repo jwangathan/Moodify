@@ -7,8 +7,9 @@ const userSchema = new mongoose.Schema({
 	expiresIn: Number,
 	displayName: String,
 	profileImage: String,
-	topArtist: [String],
-	topTracks: [{ name: String, id: String }],
+	topArtists: [{ id: String, name: String, genres: [String] }],
+	topTracks: [{ id: String, name: String, artists: [String] }],
+	topGenres: [String],
 	chatHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }],
 });
 
