@@ -2,6 +2,7 @@ const chatRouter = require('express').Router();
 const User = require('../models/user');
 const Chat = require('../models/chat');
 const { model } = require('../utils/config');
+const axios = require('axios');
 
 const toJSON = (res) => {
 	const trimmed = res.replace(/```/g, '').replace('json', '');
@@ -9,38 +10,40 @@ const toJSON = (res) => {
 	return jsonData;
 };
 
-const getRecommendations = async (attributes, token) => {
+const getRecommendations = async (
+	seed_artists,
+	seed_genres,
+	seed_tracks,
+	attributes,
+	token
+) => {
 	const {
 		acousticness,
 		danceability,
 		energy,
 		instrumentalness,
-		key,
 		liveness,
 		loudness,
 		popularity,
 		speechiness,
 		tempo,
-		time_signature,
 		valence,
 	} = attributes;
 
 	const params = {
 		limit: 20,
-		seed_artists: '', //missing 2
-		seed_genres: '', //missing 2,
-		seed_tracks: '', //missing 1,
+		seed_artists, //missing 2
+		seed_genres, //missing 2,
+		seed_tracks, //missing 1,
 		target_acousticness: acousticness,
 		target_danceability: danceability,
 		target_energy: energy,
 		target_instrumentalness: instrumentalness,
-		target_key: key,
 		target_liveness: liveness,
 		target_loudness: loudness,
 		target_popularity: popularity,
 		target_speechiness: speechiness,
 		target_tempo: tempo,
-		target_time_signature: time_signature,
 		target_valence: valence,
 	};
 
@@ -59,12 +62,21 @@ const getRecommendations = async (attributes, token) => {
 
 		return response.data;
 	} catch (error) {
+		console.log(error);
 		return null;
 	}
 };
 
 chatRouter.post('/', async (req, res) => {
-	const { spotifyId, situation, emotion, token } = req.body;
+	const {
+		seed_artists,
+		seed_tracks,
+		seed_genres,
+		spotifyId,
+		situation,
+		emotion,
+		token,
+	} = req.body;
 	try {
 		const user = await User.findOne({ spotifyId });
 
@@ -96,7 +108,13 @@ chatRouter.post('/', async (req, res) => {
 		user.chatHistory = user.chatHistory.concat(savedChat._id);
 		await user.save();
 
-		const recommendations = await getRecommendations(attributes, token);
+		const recommendations = await getRecommendations(
+			seed_artists,
+			seed_genres,
+			seed_tracks,
+			attributes,
+			token
+		);
 
 		res.status(201).json({ savedChat, recommendations });
 	} catch (error) {

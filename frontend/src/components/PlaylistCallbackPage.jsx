@@ -8,7 +8,7 @@ const PlaylistCallbackPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const spotifyId = useSelector((state) => state.auth.user.spotifyId);
+	const currUser = useSelector((state) => state.auth);
 	const token = useSelector((state) => state.auth.token);
 
 	useEffect(() => {
@@ -16,8 +16,17 @@ const PlaylistCallbackPage = () => {
 			try {
 				if (location.state?.playlist) {
 					const { situation, emotion } = location.state;
+					const artists = currUser.topArtists
+						.slice(0, 2)
+						.map((artist) => artist.id)
+						.join();
+					const tracks = currUser.topTracks[0].id;
+					const genres = currUser.topGenres.slice(0, 2).join();
 					const res = await axios.post('/api/chat', {
-						spotifyId,
+						seed_artists: artists || '',
+						seed_tracks: tracks || '',
+						seed_genres: genres || '',
+						spotifyId: currUser.user.spotifyId,
 						situation,
 						emotion,
 						token,
