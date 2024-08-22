@@ -8,6 +8,7 @@ const cors = require('cors');
 const loginRouter = require('./controllers/login');
 const chatRouter = require('./controllers/chats');
 
+const middleware = require('./utils/middleware');
 const config = require('./utils/config');
 const logger = require('./utils/logger');
 mongoose.set('strictQuery', false);
@@ -33,6 +34,7 @@ app.use(
 		saveUninitialized: true,
 	})
 );
+app.use(middleware.tokenExtractor);
 
 app.use('/api/auth', loginRouter);
 app.use('/api/chat', chatRouter);

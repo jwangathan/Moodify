@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import userService from '../services/users';
+import chatService from '../services/chats';
 
 /*
 state includes:
@@ -11,7 +12,8 @@ const authSlice = createSlice({
 	reducers: {
 		setUser(state, action) {
 			window.localStorage.setItem('loggedUser', JSON.stringify(action.payload));
-			userService.setToken(action.payload.accessToken);
+			userService.setToken(action.payload.token);
+			chatService.setToken(action.payload.token);
 			return action.payload;
 		},
 		logout(state, action) {

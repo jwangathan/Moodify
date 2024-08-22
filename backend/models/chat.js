@@ -4,7 +4,26 @@ const chatSchema = new mongoose.Schema({
 	user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 	situation: String,
 	emotion: String,
-	chatResponse: String,
+	attributes: String,
+	recommendations: {
+		seedTracks: String,
+		seedArtists: String,
+		seedGenres: String,
+		recommendedTracks: [
+			{
+				id: { type: String, required: true },
+				name: { type: String, required: true },
+				artists: [{ id: String, name: { type: String, required: true } }],
+				album: {
+					id: String,
+					name: { type: String, required: true },
+					image: { type: String, required: true },
+				},
+				previewUrl: String,
+				externalUrl: String,
+			},
+		],
+	},
 	createdAt: { type: Date, default: Date.now },
 });
 

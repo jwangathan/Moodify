@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
 import axios from 'axios';
+import chatService from '../services/chats';
 
 const PlaylistCallbackPage = () => {
 	const location = useLocation();
@@ -22,15 +23,20 @@ const PlaylistCallbackPage = () => {
 						.join();
 					const tracks = currUser.topTracks[0].id;
 					const genres = currUser.topGenres.slice(0, 2).join();
-					const res = await axios.post('/api/chat', {
-						seed_artists: artists || '',
-						seed_tracks: tracks || '',
-						seed_genres: genres || '',
-						spotifyId: currUser.user.spotifyId,
+					const res = chatService.create({
+						seed_artists: artists,
+						seed_genres: genres,
+						seed_tracks: tracks,
 						situation,
 						emotion,
-						token,
 					});
+					// const res = await axios.post('/api/chat', {
+					// 	seed_artists: artists || '',
+					// 	seed_tracks: tracks || '',
+					// 	seed_genres: genres || '',
+					// 	situation,
+					// 	emotion,
+					// });
 					console.log(res);
 				}
 			} catch (error) {
