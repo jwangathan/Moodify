@@ -1,6 +1,6 @@
-const chatRouter = require('express').Router();
+const entryRouter = require('express').Router();
 const User = require('../models/user');
-const Chat = require('../models/chat');
+const Entry = require('../models/entry');
 const { model } = require('../utils/config');
 const middleware = require('../utils/middleware');
 const axios = require('axios');
@@ -67,21 +67,21 @@ const getRecommendations = async (
 	}
 };
 
-chatRouter.get('/', async (req, res) => {
-	const chats = await Chat.find({}).populate('user', { spotifyId: 1 });
-	res.json(chats);
+entryRouter.get('/', async (req, res) => {
+	const entries = await Entry.find({}).populate('user', { spotifyId: 1 });
+	res.json(entries);
 });
 
-chatRouter.get('/:id', async (req, res) => {
-	const chat = await Blog.findByeId(request.params.id);
-	if (chat) {
-		res.json(chat);
+entryRouter.get('/:id', async (req, res) => {
+	const entry = await Blog.findByeId(req.params.id);
+	if (entry) {
+		res.json(entry);
 	} else {
 		res.status(404).end();
 	}
 });
 
-chatRouter.post('/', middleware.userExtractor, async (req, res) => {
+entryRouter.post('/', middleware.userExtractor, async (req, res) => {
 	const user = req.user;
 	const token = req.token;
 	const { seed_artists, seed_tracks, seed_genres, situation, emotion } =
@@ -109,7 +109,7 @@ chatRouter.post('/', middleware.userExtractor, async (req, res) => {
 				.json({ message: 'Error producing song recommendations' });
 		}
 
-		const chat = new Chat({
+		const entry = new Entry({
 			user: user._id,
 			situation,
 			emotion,
@@ -118,7 +118,7 @@ chatRouter.post('/', middleware.userExtractor, async (req, res) => {
 				seedTracks: seed_tracks,
 				seedArtists: seed_artists,
 				seedGenres: seed_genres,
-				recommendedTracks: recommendations.tracks.map((track) => ({
+				tracks: recommendations.tracks.map((track) => ({
 					id: track.id,
 					name: track.name,
 					artists: track.artists.map((artist) => ({
@@ -136,17 +136,17 @@ chatRouter.post('/', middleware.userExtractor, async (req, res) => {
 			},
 		});
 
-		await chat.populate('user', { spotifyId: 1 });
-		const savedChat = await chat.save();
+		await entry.populate('user', { spotifyId: 1 });
+		const savedEntry = await entry.save();
 
-		user.chatHistory = user.chatHistory.concat(savedChat._id);
+		user.entryHistory = user.entryHistory.concat(savedEntry._id);
 		await user.save();
 
-		res.status(201).json({ savedChat, recommendations });
+		res.status(201).json(savedEntry);
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: error });
 	}
 });
 
-module.exports = chatRouter;
+module.exports = entryRouter;

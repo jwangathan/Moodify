@@ -2,15 +2,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
-import axios from 'axios';
-import chatService from '../services/chats';
+import entryService from '../services/entries';
 
 const PlaylistCallbackPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const currUser = useSelector((state) => state.auth);
-	const token = useSelector((state) => state.auth.token);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -23,7 +21,7 @@ const PlaylistCallbackPage = () => {
 						.join();
 					const tracks = currUser.topTracks[0].id;
 					const genres = currUser.topGenres.slice(0, 2).join();
-					const res = chatService.create({
+					const res = entryService.create({
 						seed_artists: artists,
 						seed_genres: genres,
 						seed_tracks: tracks,

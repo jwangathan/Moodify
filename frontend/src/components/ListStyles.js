@@ -19,3 +19,7 @@ export const ListHeader = styled.h2`
 export const OrderedList = styled.ol`
 	padding-left: 20px;
 `;
+
+export const UnorderedList = styled.ul`
+	list-style-type: none;
+`;

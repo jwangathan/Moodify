@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
 	topArtists: [{ id: String, name: String, genres: [String] }],
 	topTracks: [{ id: String, name: String, artists: [String] }],
 	topGenres: [String],
-	chatHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }],
+	entryHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Entry' }],
 });
 
 userSchema.set('toJSON', {

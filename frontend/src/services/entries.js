@@ -1,11 +1,10 @@
 import axios from 'axios';
-const baseUrl = '/api/chat';
+const baseUrl = '/api/entry';
 
 let token = null;
 
 const setToken = (newToken) => {
 	token = `Bearer ${newToken}`;
-	console.log(`setToken: ${token}`);
 };
 
 const getAll = () => {
@@ -13,11 +12,11 @@ const getAll = () => {
 	return req.then((res) => res.data);
 };
 
-const create = async (newChat) => {
+const create = async (newEntry) => {
 	const config = {
 		headers: { Authorization: token },
 	};
-	const res = await axios.post(baseUrl, newChat, config);
+	const res = await axios.post(baseUrl, newEntry, config);
 	return res.data;
 };
 

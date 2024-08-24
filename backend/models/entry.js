@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const chatSchema = new mongoose.Schema({
+const entrySchema = new mongoose.Schema({
 	user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 	situation: String,
 	emotion: String,
@@ -9,7 +9,7 @@ const chatSchema = new mongoose.Schema({
 		seedTracks: String,
 		seedArtists: String,
 		seedGenres: String,
-		recommendedTracks: [
+		tracks: [
 			{
 				id: { type: String, required: true },
 				name: { type: String, required: true },
@@ -27,7 +27,7 @@ const chatSchema = new mongoose.Schema({
 	createdAt: { type: Date, default: Date.now },
 });
 
-chatSchema.set('toJSON', {
+entrySchema.set('toJSON', {
 	transform: (document, returnedObject) => {
 		returnedObject.id = returnedObject._id.toString();
 		delete returnedObject._id;
@@ -36,6 +36,6 @@ chatSchema.set('toJSON', {
 	},
 });
 
-const Chat = mongoose.model('Chat', chatSchema);
+const Entry = mongoose.model('Entry', entrySchema);
 
-module.exports = Chat;
+module.exports = Entry;
