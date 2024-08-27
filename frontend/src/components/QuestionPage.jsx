@@ -21,8 +21,8 @@ const QuestionPage = () => {
 			setStep(2);
 		} else if (step === 2) {
 			setStep(1);
-			navigate('/playlist/callback', {
-				state: { playlist: true, situation, emotion },
+			navigate('/entries/callback', {
+				state: { situation, emotion },
 			});
 			setSituation('');
 			setEmotion('');

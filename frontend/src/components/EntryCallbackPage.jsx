@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
 import entryService from '../services/entries';
 
-const PlaylistCallbackPage = () => {
+const EntryCallbackPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -13,7 +13,7 @@ const PlaylistCallbackPage = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				if (location.state?.playlist) {
+				if (location.state?.situation && location.state?.emotion) {
 					const { situation, emotion } = location.state;
 					const artists = currUser.topArtists
 						.slice(0, 2)
@@ -60,4 +60,4 @@ const PlaylistCallbackPage = () => {
 	);
 };
 
-export default PlaylistCallbackPage;
+export default EntryCallbackPage;

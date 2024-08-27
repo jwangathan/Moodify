@@ -1,21 +1,24 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useMatch } from 'react-router-dom';
 import HomePage from './components/HomePage';
-import QuestionPage from './components/QuestionPage';
-import EntryList from './components/EntryList';
 import LoginCallbackPage from './components/LoginCallbackPage';
 import Navigation from './components/Navigation';
+import UserPage from './components/UserPage';
+import QuestionPage from './components/QuestionPage';
+import EntryList from './components/EntryList';
+import EntryView from './components/EntryView';
+import EntryCallbackPage from './components/EntryCallbackPage';
 import Notification from './components/Notification';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { setUser } from './reducers/authReducer';
 import { initializeEntries } from './reducers/entryReducer';
 import { Background } from './components/DivStyles';
-import PlaylistCallbackPage from './components/PlaylistCallbackPage';
-import UserPage from './components/UserPage';
 
 function App() {
 	const dispatch = useDispatch();
 	const currUser = useSelector((state) => state.auth);
+	const entries = useSelector((state) => state.entries);
+
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedUser');
 		if (loggedUserJSON) {
@@ -28,6 +31,11 @@ function App() {
 		dispatch(initializeEntries());
 	}, []);
 
+	const matchEntry = useMatch('/entries/:id');
+	const entry = matchEntry
+		? entries.find((entry) => entry.id === matchEntry.params.id)
+		: null;
+
 	return (
 		<Background>
 			{currUser && <Navigation />}
@@ -36,8 +44,9 @@ function App() {
 				<Routes>
 					<Route path="/" element={<UserPage />} />
 					<Route path="/survey" element={<QuestionPage />} />
-					<Route path="/playlist" element={<EntryList currUser={currUser} />} />
-					<Route path="/playlist/callback" element={<PlaylistCallbackPage />} />
+					<Route path="/entries" element={<EntryList currUser={currUser} />} />
+					<Route path="/entries/:id" element={<EntryView entry={entry} />} />
+					<Route path="/entries/callback" element={<EntryCallbackPage />} />
 				</Routes>
 			) : (
 				<Routes>

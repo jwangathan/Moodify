@@ -16,6 +16,10 @@ export const ListHeader = styled.h2`
 	margin-bottom: 10px;
 `;
 
+export const ListItem = styled.li`
+	margin-bottom: 20px;
+`;
+
 export const OrderedList = styled.ol`
 	padding-left: 20px;
 `;

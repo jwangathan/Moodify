@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import entryService from '../services/entries';
 
 // user: {spotifyId}, situation, emotion, attributes,
-// recommendations: {seedTracks, seedArtists, seedGenres, tracks: {id, name, artists: {id, name}, allbum: {id, name, image}, previewUrl, externalUrl}}
+// recommendations: {seedTracks, seedArtists, seedGenres, tracks: {id, name, artists: {id, name}, album: {id, name, image}, previewUrl, externalUrl}}
 const entrySlice = createSlice({
 	name: 'entries',
 	initialState: [],

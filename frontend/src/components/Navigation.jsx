@@ -31,7 +31,7 @@ const Navigation = () => {
 					</Link>
 				</Nav.Link>
 				<Nav.Link href="#" as="span">
-					<Link style={{ padding: 5 }} to="/playlist">
+					<Link style={{ padding: 5 }} to="/entries">
 						My Playlists
 					</Link>
 				</Nav.Link>

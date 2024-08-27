@@ -1,8 +1,20 @@
 import { useSelector } from 'react-redux';
-import { UnorderedList } from './ListStyles';
+import { useNavigate } from 'react-router-dom';
+import { UnorderedList, ListItem } from './ListStyles';
+import { EntryItem } from './EntryStyles';
 
 const Entry = ({ entry }) => {
-	return <li>{entry.user.spotifyId}</li>;
+	const navigate = useNavigate();
+	return (
+		<ListItem>
+			<EntryItem onClick={() => navigate(`/entries/${entry.id}`)}>
+				<p>Tell me about something in your life.</p>
+				<em>{entry.situation}</em>
+				<p>What would you like to feel from this?</p>
+				<em>{entry.emotion}</em>
+			</EntryItem>
+		</ListItem>
+	);
 };
 
 const EntryList = ({ currUser }) => {
