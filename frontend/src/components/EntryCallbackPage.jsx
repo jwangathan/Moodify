@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
-import entryService from '../services/entries';
+import { createEntry } from '../reducers/entryReducer';
 
 const EntryCallbackPage = () => {
 	const location = useLocation();
@@ -15,27 +15,23 @@ const EntryCallbackPage = () => {
 			try {
 				if (location.state?.situation && location.state?.emotion) {
 					const { situation, emotion } = location.state;
-					const artists = currUser.topArtists
+					const seed_artists = currUser.topArtists
 						.slice(0, 2)
 						.map((artist) => artist.id)
 						.join();
-					const tracks = currUser.topTracks[0].id;
-					const genres = currUser.topGenres.slice(0, 2).join();
-					const res = entryService.create({
-						seed_artists: artists,
-						seed_genres: genres,
-						seed_tracks: tracks,
-						situation,
-						emotion,
-					});
-					// const res = await axios.post('/api/chat', {
-					// 	seed_artists: artists || '',
-					// 	seed_tracks: tracks || '',
-					// 	seed_genres: genres || '',
-					// 	situation,
-					// 	emotion,
-					// });
-					console.log(res);
+					const seed_tracks = currUser.topTracks[0].id;
+					const seed_genres = currUser.topGenres.slice(0, 2).join();
+					const newEntry = await dispatch(
+						createEntry(
+							seed_artists,
+							seed_genres,
+							seed_tracks,
+							situation,
+							emotion
+						)
+					);
+
+					navigate(`/entries/${newEntry.id}`);
 				}
 			} catch (error) {
 				console.log(error);

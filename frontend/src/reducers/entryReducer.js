@@ -31,17 +31,19 @@ export const createEntry = (
 	emotion
 ) => {
 	return async (dispatch) => {
-		entryService
-			.create({
+		try {
+			const res = await entryService.create({
 				seed_artists,
 				seed_genres,
 				seed_tracks,
 				situation,
 				emotion,
-			})
-			.then((res) => {
-				dispatch(appendEntry(res));
 			});
+			dispatch(appendEntry(res));
+			return res;
+		} catch (error) {
+			console.log(error);
+		}
 	};
 };
 

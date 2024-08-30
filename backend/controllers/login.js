@@ -2,6 +2,7 @@ const loginRouter = require('express').Router();
 const axios = require('axios');
 const User = require('../models/user');
 const baseURL = 'https://api.spotify.com/v1';
+const stateKey = 'spotify_auth_state';
 
 const generateCode = async () => {
 	const possible =
@@ -34,8 +35,6 @@ const generateRandomString = (length) => {
 	return text;
 };
 
-const stateKey = 'spotify_auth_state';
-
 loginRouter.get('/login', async (req, res) => {
 	const { code_verifier, code_challenge_base64 } = await generateCode();
 	const state = generateRandomString(16);
@@ -59,6 +58,7 @@ loginRouter.get('/login', async (req, res) => {
 loginRouter.get('/callback', async (req, res) => {
 	const code = req.query.code;
 	const code_verifier = req.session.codeVerifier;
+
 	if (!code_verifier) {
 		return res.status(400).send('Code verifier not found in session');
 	}
@@ -81,6 +81,7 @@ loginRouter.get('/callback', async (req, res) => {
 			body,
 			config
 		);
+
 		const { access_token, refresh_token, expires_in } = tokenRes.data;
 
 		const userRes = await axios.get(`${baseURL}/me`, {
@@ -88,6 +89,7 @@ loginRouter.get('/callback', async (req, res) => {
 				Authorization: `Bearer ${access_token}`,
 			},
 		});
+
 		const { id: spotifyId, display_name, images } = userRes.data;
 		const profileImage = images.length > 0 ? images[0].url : '';
 
@@ -140,7 +142,7 @@ loginRouter.get('/callback', async (req, res) => {
 				topTracks,
 				topGenres,
 			},
-			{ new: true, upsert: true }
+			{ new: true, upsert: true, setDefaultsOnInsert: true }
 		);
 
 		res.status(200).json({

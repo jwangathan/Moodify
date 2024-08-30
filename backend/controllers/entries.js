@@ -1,5 +1,4 @@
 const entryRouter = require('express').Router();
-const User = require('../models/user');
 const Entry = require('../models/entry');
 const { model } = require('../utils/config');
 const middleware = require('../utils/middleware');
@@ -67,13 +66,18 @@ const getRecommendations = async (
 	}
 };
 
-entryRouter.get('/', async (req, res) => {
-	const entries = await Entry.find({}).populate('user', { spotifyId: 1 });
+entryRouter.get('/', middleware.userExtractor, async (req, res) => {
+	const user = req.user;
+
+	const entries = await Entry.find({ user: user._id }).populate('user', {
+		spotifyId: 1,
+	});
+
 	res.json(entries);
 });
 
 entryRouter.get('/:id', async (req, res) => {
-	const entry = await Blog.findByeId(req.params.id);
+	const entry = await Blog.findById(req.params.id);
 	if (entry) {
 		res.json(entry);
 	} else {

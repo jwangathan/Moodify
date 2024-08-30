@@ -24,11 +24,8 @@ function App() {
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
 			dispatch(setUser(user));
+			dispatch(initializeEntries());
 		}
-	}, [dispatch]);
-
-	useEffect(() => {
-		dispatch(initializeEntries());
 	}, []);
 
 	const matchEntry = useMatch('/entries/:id');
@@ -44,14 +41,14 @@ function App() {
 				<Routes>
 					<Route path="/" element={<UserPage />} />
 					<Route path="/survey" element={<QuestionPage />} />
-					<Route path="/entries" element={<EntryList currUser={currUser} />} />
+					<Route path="/entries" element={<EntryList />} />
 					<Route path="/entries/:id" element={<EntryView entry={entry} />} />
 					<Route path="/entries/callback" element={<EntryCallbackPage />} />
 				</Routes>
 			) : (
 				<Routes>
 					<Route path="/" element={<HomePage />} />
-					<Route path="/auth/callback" element={<LoginCallbackPage />} />
+					<Route path="/auth/callback/*" element={<LoginCallbackPage />} />
 				</Routes>
 			)}
 		</Background>

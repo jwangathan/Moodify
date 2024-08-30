@@ -17,21 +17,21 @@ const Entry = ({ entry }) => {
 	);
 };
 
-const EntryList = ({ currUser }) => {
+const EntryList = () => {
 	const entries = useSelector((state) => state.entries);
+
+	if (entries.length === 0) {
+		return <div>Create an Entry!</div>;
+	}
 
 	return (
 		<div>
 			{entries && (
 				<div>
 					<UnorderedList>
-						{entries
-							.filter(
-								(entry) => entry.user.spotifyId === currUser.user.spotifyId
-							)
-							.map((entry) => (
-								<Entry key={entry.id} entry={entry} />
-							))}
+						{entries.map((entry) => (
+							<Entry key={entry.id} entry={entry} />
+						))}
 					</UnorderedList>
 				</div>
 			)}

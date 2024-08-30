@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CenteredComponent } from './DivStyles';
 
 const QuestionPage = () => {
 	const [step, setStep] = useState(1);
@@ -29,7 +30,7 @@ const QuestionPage = () => {
 		}
 	};
 	return (
-		<div>
+		<CenteredComponent>
 			{step === 1 ? (
 				<>
 					<h1>Tell me about something in your life</h1>
@@ -53,7 +54,7 @@ const QuestionPage = () => {
 				/>
 				<input type="submit" value="Submit" />
 			</form>
-		</div>
+		</CenteredComponent>
 	);
 };
 
