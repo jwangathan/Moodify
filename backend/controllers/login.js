@@ -1,6 +1,7 @@
 const loginRouter = require('express').Router();
 const axios = require('axios');
 const User = require('../models/user');
+const middleware = require('../utils/middleware');
 const baseURL = 'https://api.spotify.com/v1';
 const stateKey = 'spotify_auth_state';
 
@@ -147,19 +148,64 @@ loginRouter.get('/callback', async (req, res) => {
 
 		res.status(200).json({
 			token: access_token,
-			refreshToken: refresh_token,
 			expiresIn: expires_in,
+			topArtists: topArtists.slice(0, 10),
+			topGenres,
+			topTracks,
 			user: {
 				spotifyId,
 				displayName: display_name,
 				profileImage,
 			},
-			topArtists: topArtists.slice(0, 10),
-			topTracks,
-			topGenres,
 		});
 	} catch (error) {
 		res.status(500).json({ message: error });
+	}
+});
+
+loginRouter.post('/refresh', async (req, res) => {
+	try {
+		const { spotifyId } = req.body;
+
+		const { refreshToken } = await User.findOne({ spotifyId });
+
+		const body = new URLSearchParams({
+			grant_type: 'refresh_token',
+			refresh_token: refreshToken,
+			client_id: process.env.CLIENT_ID,
+		});
+
+		const params = {
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		};
+
+		const newRefresh = await axios.post(
+			'https://accounts.spotify.com/api/token',
+			body,
+			params
+		);
+
+		const { access_token, expires_in } = newRefresh.data;
+		const refresh_token = newRefresh.data.refresh_token || refreshToken;
+
+		await User.findOneAndUpdate(
+			{ spotifyId },
+			{
+				accessToken: access_token,
+				refreshToken: refresh_token,
+				expiresIn: expires_in,
+			}
+		);
+
+		res.status(200).json({
+			token: access_token,
+			expiresIn: expires_in,
+		});
+	} catch (error) {
+		console.error('Failed to refresh access token: ', error);
+		res.status(500).json({ error: 'Failed to refresh access token' });
 	}
 });
 

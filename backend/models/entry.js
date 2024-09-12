@@ -17,12 +17,20 @@ const entrySchema = new mongoose.Schema({
 				album: {
 					id: String,
 					name: { type: String, required: true },
-					image: { type: String, required: true },
+					image: { type: String },
 				},
 				previewUrl: String,
 				externalUrl: String,
 			},
 		],
+	},
+	playlist: {
+		id: String,
+		snapshot: String,
+		name: String,
+		url: String,
+		tracks: [{ type: String }],
+		image: String,
 	},
 	createdAt: { type: Date, default: Date.now },
 });

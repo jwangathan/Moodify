@@ -1,8 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import authService from '../services/auth';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../reducers/authReducer';
+import { loginUser } from '../reducers/authReducer';
 import { Spinner } from 'react-bootstrap';
 import { initializeEntries } from '../reducers/entryReducer';
 import { CenteredComponent } from './DivStyles';
@@ -26,9 +25,8 @@ const LoginCallbackPage = () => {
 
 				const code = params.get('code');
 				if (code) {
-					const res = await authService.getUser({ code });
-					dispatch(setUser(res));
-					dispatch(initializeEntries());
+					await dispatch(loginUser(code));
+					await dispatch(initializeEntries());
 					navigate('/');
 				}
 			} catch (error) {

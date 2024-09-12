@@ -8,6 +8,7 @@ import EntryList from './components/EntryList';
 import EntryView from './components/EntryView';
 import EntryCallbackPage from './components/EntryCallbackPage';
 import Notification from './components/Notification';
+import CountdownModal from './components/CountdownModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { setUser } from './reducers/authReducer';
@@ -18,6 +19,7 @@ function App() {
 	const dispatch = useDispatch();
 	const currUser = useSelector((state) => state.auth);
 	const entries = useSelector((state) => state.entries);
+	const { isVisible } = useSelector((state) => state.countdown);
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedUser');
@@ -37,6 +39,7 @@ function App() {
 		<Background>
 			{currUser && <Navigation />}
 			<Notification />
+			{isVisible && <CountdownModal />}
 			{currUser ? (
 				<Routes>
 					<Route path="/" element={<UserPage />} />

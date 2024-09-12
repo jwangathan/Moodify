@@ -7,15 +7,20 @@ const setToken = (newToken) => {
 	token = `Bearer ${newToken}`;
 };
 
-const getAll = () => {
+const getAll = async () => {
 	const config = {
 		headers: { Authorization: token },
 	};
-	const req = axios.get(baseUrl, config);
-	return req.then((res) => res.data);
+	const res = await axios.get(baseUrl, config);
+	return res.data;
 };
 
-const create = async (newEntry) => {
+const getEntry = async (id) => {
+	const res = await axios.get(`${baseUrl}/${id}`);
+	return res.data;
+};
+
+const createEntry = async (newEntry) => {
 	const config = {
 		headers: { Authorization: token },
 	};
@@ -23,4 +28,12 @@ const create = async (newEntry) => {
 	return res.data;
 };
 
-export default { setToken, getAll, create };
+const managePlaylist = async (id, selectedTracks) => {
+	const config = {
+		headers: { Authorization: token },
+	};
+	const res = await axios.put(`${baseUrl}/${id}`, { selectedTracks }, config);
+	return res.data;
+};
+
+export default { setToken, getAll, getEntry, createEntry, managePlaylist };

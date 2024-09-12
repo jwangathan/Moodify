@@ -37,7 +37,7 @@ app.use(
 app.use(middleware.tokenExtractor);
 
 app.use('/api/auth', loginRouter);
-app.use('/api/entry', entryRouter);
+app.use('/api/entry', middleware.userExtractor, entryRouter);
 
 app.get('/*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'dist', 'index.html'));

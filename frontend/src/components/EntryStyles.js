@@ -94,3 +94,45 @@ export const AlbumName = styled.p`
 	font-weight: lighter;
 	margin-top: 4px;
 `;
+
+export const SelectButton = styled.button`
+	background-color: #007bff; /* Blue background */
+	color: white; /* White text */
+	border: none; /* Remove border */
+	border-radius: 5px; /* Rounded corners */
+	padding: 10px 15px; /* Padding inside the button */
+	cursor: pointer; /* Pointer cursor on hover */
+	font-size: 14px; /* Font size */
+	margin-top: 10px; /* Margin at the top */
+	transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+
+	&:hover {
+		background-color: #0056b3; /* Darker blue on hover */
+	}
+
+	&:disabled {
+		background-color: #d6d6d6; /* Gray background for disabled state */
+		cursor: not-allowed; /* Not-allowed cursor */
+	}
+`;
+
+export const PlaylistButton = styled.button`
+	background-color: #28a745; /* Green background */
+	color: white; /* White text */
+	border: none; /* Remove border */
+	border-radius: 5px; /* Rounded corners */
+	padding: 10px 15px; /* Padding inside the button */
+	cursor: pointer; /* Pointer cursor on hover */
+	font-size: 16px; /* Font size */
+	margin-top: 20px; /* Margin at the top */
+	transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+
+	&:hover {
+		background-color: #218838; /* Darker green on hover */
+	}
+
+	&:disabled {
+		background-color: #d6d6d6; /* Gray background for disabled state */
+		cursor: not-allowed; /* Not-allowed cursor */
+	}
+`;
