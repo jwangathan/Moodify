@@ -24,6 +24,7 @@ const EntryList = () => {
 		return <div>Create an Entry!</div>;
 	}
 
+	console.log(entries);
 	return (
 		<div>
 			{entries && (

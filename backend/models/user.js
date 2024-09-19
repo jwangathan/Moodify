@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
 	spotifyId: { type: String, required: true, unique: true },
 	accessToken: String,
 	refreshToken: String,
-	expiresIn: Number,
+	expiresAt: Number,
 	displayName: String,
 	profileImage: String,
 	topArtists: [{ id: String, name: String, genres: [String] }],
@@ -18,7 +18,8 @@ userSchema.set('toJSON', {
 		returnedObject.id = returnedObject._id.toString();
 		delete returnedObject._id;
 		delete returnedObject.__v;
-		delete returnedObject.passwordhash;
+		delete returnedObject.passwordHash;
+		return returnedObject;
 	},
 });
 

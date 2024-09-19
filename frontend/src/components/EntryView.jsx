@@ -42,27 +42,25 @@ const Track = ({ track, onSelect, isSelected }) => {
 const EntryView = ({ entry }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const [selectedTracks, setSelectedTracks] = useState([]); //contains trackIds
-	const storedTracks = entry.playlist.tracks;
+	const [selectedTrackIds, setSelectedTrackIds] = useState([]);
+
+	const storedTracks = entry && entry.playlist.tracks;
+	console.log('entry: ', entry);
+
 	useEffect(() => {
 		if (storedTracks && storedTracks.length > 0)
-			setSelectedTracks(storedTracks);
+			setSelectedTrackIds(storedTracks);
 	}, [storedTracks]);
 
-	const handleSelectTracks = (track) => {
-		setSelectedTracks((prevSelected) => {
-			if (prevSelected.includes(track.id)) {
-				console.log('removed');
-				return prevSelected.filter((tId) => tId !== track.id);
-			} else {
-				console.log('added');
-				return [...prevSelected, track.id];
-			}
-		});
-	};
+	const toggleSelectedTrack = (trackId) =>
+		setSelectedTrackIds((prevIds) =>
+			prevIds.includes(trackId)
+				? prevIds.filter((id) => id !== trackId)
+				: [...prevIds, trackId]
+		);
 
-	const handlePlaylistUpdate = async () => {
-		dispatch(updatePlaylist(entry.id, selectedTracks));
+	const updateEntryPlaylist = async () => {
+		dispatch(updatePlaylist(entry.id, selectedTrackIds));
 	};
 
 	return (
@@ -74,20 +72,20 @@ const EntryView = ({ entry }) => {
 						Return to Entries
 					</BackButton>
 					<GridContainer>
-						{entry.recommendations.tracks.map((track) => (
+						{entry.tracks.map((track) => (
 							<Track
 								key={track.id}
 								track={track}
-								onSelect={handleSelectTracks}
-								isSelected={selectedTracks.some((t) => t === track.id)}
+								onSelect={toggleSelectedTrack}
+								isSelected={selectedTrackIds.includes(track.id)}
 							/>
 						))}
 					</GridContainer>
 					<PlaylistButton
-						onClick={handlePlaylistUpdate}
-						disabled={selectedTracks.length === 0}
+						onClick={updateEntryPlaylist}
+						disabled={selectedTrackIds.length === 0}
 					>
-						{selectedTracks.length > 0
+						{selectedTrackIds.length > 0
 							? 'Create/Update Playlist'
 							: 'Select Songs to Create Playlist'}
 					</PlaylistButton>

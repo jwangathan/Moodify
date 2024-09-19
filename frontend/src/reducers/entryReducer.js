@@ -28,6 +28,7 @@ const entrySlice = createSlice({
 export const initializeEntries = () => {
 	return async (dispatch) => {
 		const entries = await entryService.getAll();
+		console.log(entries);
 		dispatch(setEntries(entries));
 	};
 };
@@ -66,6 +67,15 @@ export const updatePlaylist = (id, selectedTracks) => {
 		}
 	};
 };
+
+// export const fetchEntryById = (id) => {
+// 	return async (dispatch) => {
+// 		try {
+// 			const res = await entryService.getEntry(id)
+// 			dispatch()
+// 		}
+// 	}
+// }
 
 export const { updateEntry, appendEntry, setEntries } = entrySlice.actions;
 export default entrySlice.reducer;

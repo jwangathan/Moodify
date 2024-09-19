@@ -24,8 +24,12 @@ const authSlice = createSlice({
 	reducers: {
 		setUser(state, action) {
 			const newState = { ...state, ...action.payload };
-			window.localStorage.setItem('loggedUser', JSON.stringify(newState));
-			if (newState.token) entryService.setToken(newState.token);
+			window.localStorage.setItem('user', JSON.stringify(newState));
+			if (newState.token) {
+				console.log('SETTING TOKEN');
+				entryService.setToken(newState.token);
+			}
+			console.log(newState);
 			return newState;
 		},
 		logout(state, action) {
@@ -50,13 +54,11 @@ export const loginUser = (code) => {
 };
 
 export const refreshToken = () => {
-	return async (dispatch, getState) => {
+	return async (dispatch) => {
 		try {
-			var { auth } = getState();
-			const res = await authService.refresh({ spotifyId: auth.user.spotifyId });
+			const res = await authService.refresh();
 			dispatch(setUser(res));
-			auth = getState();
-			setRefreshTimeout({ dispatch, expiresIn: auth.expiresIn });
+			setRefreshTimeout({ dispatch, expiresIn: res.expiresIn });
 		} catch (error) {
 			console.error('Failed to refresh token: ', error);
 			dispatch(logout());

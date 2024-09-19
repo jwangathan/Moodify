@@ -5,42 +5,35 @@ const entrySchema = new mongoose.Schema({
 	situation: String,
 	emotion: String,
 	attributes: String,
-	recommendations: {
-		seedTracks: String,
-		seedArtists: String,
-		seedGenres: String,
-		tracks: [
-			{
-				id: { type: String, required: true },
+	tracks: [
+		{
+			id: { type: String, required: true },
+			name: { type: String, required: true },
+			artists: [{ id: String, name: { type: String, required: true } }],
+			album: {
+				id: String,
 				name: { type: String, required: true },
-				artists: [{ id: String, name: { type: String, required: true } }],
-				album: {
-					id: String,
-					name: { type: String, required: true },
-					image: { type: String },
-				},
-				previewUrl: String,
-				externalUrl: String,
+				image: { type: String },
 			},
-		],
-	},
+			previewUrl: String,
+			externalUrl: String,
+		},
+	],
 	playlist: {
-		id: String,
-		snapshot: String,
-		name: String,
-		url: String,
-		tracks: [{ type: String }],
-		image: String,
+		id: { type: String, default: null },
+		snapshot: { type: String, default: null },
+		selectedSongs: [{ type: String }],
 	},
 	createdAt: { type: Date, default: Date.now },
 });
 
 entrySchema.set('toJSON', {
-	transform: (document, returnedObject) => {
-		returnedObject.id = returnedObject._id.toString();
-		delete returnedObject._id;
-		delete returnedObject.__v;
-		delete returnedObject.passwordhash;
+	transform: (doc, ret) => {
+		ret.id = doc._id.toString();
+		delete ret._id;
+		delete ret.__v;
+		delete ret.passwordhash;
+		return ret;
 	},
 });
 

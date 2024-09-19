@@ -22,11 +22,15 @@ entryRouter.get('/', async (req, res) => {
 
 //retrieves specific entry
 entryRouter.get('/:id', async (req, res) => {
-	const entry = await Entry.findById(req.params.id);
-	if (entry) {
-		res.json(entry);
-	} else {
-		res.status(404).end();
+	const id = req.params.id;
+	try {
+		const entry = await Entry.findById(id).exec();
+		if (!entry) {
+			return res.status(404).json({ error: `Entry not found with ID ${id}` });
+		}
+		return res.json(entry);
+	} catch (err) {
+		return res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
 
@@ -64,26 +68,21 @@ entryRouter.post('/', async (req, res) => {
 			situation,
 			emotion,
 			attributes: chatResponse,
-			recommendations: {
-				seedTracks: seed_tracks,
-				seedArtists: seed_artists,
-				seedGenres: seed_genres,
-				tracks: recommendations.tracks.map((track) => ({
-					id: track.id,
-					name: track.name,
-					artists: track.artists.map((artist) => ({
-						id: artist.id,
-						name: artist.name,
-					})),
-					album: {
-						id: track.album.id,
-						name: track.album.name,
-						image: track.album.images[0].url,
-					},
-					previewUrl: track.preview_url,
-					externalUrl: track.external_urls.spotify,
+			tracks: recommendations.tracks.map((track) => ({
+				id: track.id,
+				name: track.name,
+				artists: track.artists.map((artist) => ({
+					id: artist.id,
+					name: artist.name,
 				})),
-			},
+				album: {
+					id: track.album.id,
+					name: track.album.name,
+					image: track.album.images[0].url,
+				},
+				previewUrl: track.preview_url,
+				externalUrl: track.external_urls.spotify,
+			})),
 		});
 
 		await entry.populate('user', { spotifyId: 1 });
@@ -116,6 +115,7 @@ entryRouter.put('/:id', async (req, res) => {
 		if (!targetEntry) {
 			return res.status(404).json({ error: 'Entry not found' });
 		}
+
 		if (!targetEntry.playlist || !targetEntry.playlist.id) {
 			const newPlaylist = await createPlaylist(
 				user.spotifyId,
@@ -128,20 +128,15 @@ entryRouter.put('/:id', async (req, res) => {
 				selectedTracks,
 				token
 			);
-			console.log(snapshot);
 
 			targetEntry.playlist = {
 				id: newPlaylist.id,
 				snapshot: snapshot,
-				name: newPlaylist.name,
 				tracks: selectedTracks,
-				url: newPlaylist.external_urls.spotify,
-				image: newPlaylist.images.url,
 			};
 
 			await targetEntry.save();
 
-			console.log('CREATED');
 			return res.status(201).json({
 				message: 'Playlist created and songs added to Spotify',
 				id,
@@ -177,7 +172,7 @@ entryRouter.put('/:id', async (req, res) => {
 			targetEntry.playlist.snapshot = snapshot;
 
 			newEntry = await targetEntry.save();
-			console.log('UPDATED');
+
 			return res.status(201).json({
 				message: 'Playlist updated in Spotify and saved to database',
 				id,

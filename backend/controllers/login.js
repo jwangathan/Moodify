@@ -1,9 +1,12 @@
 const loginRouter = require('express').Router();
 const axios = require('axios');
 const User = require('../models/user');
-const middleware = require('../utils/middleware');
 const baseURL = 'https://api.spotify.com/v1';
-const stateKey = 'spotify_auth_state';
+const COOKIE_OPTIONS = {
+	httpOnly: true,
+	secure: process.env.NODE_ENV === 'production',
+	sameSite: 'Lax',
+};
 
 const generateCode = async () => {
 	const possible =
@@ -39,7 +42,6 @@ const generateRandomString = (length) => {
 loginRouter.get('/login', async (req, res) => {
 	const { code_verifier, code_challenge_base64 } = await generateCode();
 	const state = generateRandomString(16);
-	res.cookie(stateKey, state);
 	req.session.codeVerifier = code_verifier;
 	const authUrl = new URL('https://accounts.spotify.com/authorize');
 	const params = {
@@ -47,7 +49,7 @@ loginRouter.get('/login', async (req, res) => {
 		client_id: process.env.CLIENT_ID,
 		scope:
 			'user-read-private user-read-email user-top-read playlist-modify-private playlist-modify-public',
-		state: state,
+		state,
 		code_challenge_method: 'S256',
 		code_challenge: code_challenge_base64,
 		redirect_uri: `${process.env.CLIENT_URL}/auth/callback`,
@@ -136,7 +138,7 @@ loginRouter.get('/callback', async (req, res) => {
 				spotifyId,
 				accessToken: access_token,
 				refreshToken: refresh_token,
-				expiresIn: expires_in,
+				expiresIn: Math.floor(Date.now() / 1000) + expires_in,
 				profileImage: profileImage,
 				displayName: display_name,
 				topArtists: topArtists.slice(0, 10),
@@ -159,16 +161,19 @@ loginRouter.get('/callback', async (req, res) => {
 			},
 		});
 	} catch (error) {
-		res.status(500).json({ message: error });
+		console.log('Error during Spotify token exchange: ', error.response.data);
+		res.status(500).send('Token exchange failed');
 	}
 });
 
 loginRouter.post('/refresh', async (req, res) => {
+	const { spotifyId } = req.body;
+	const { refreshToken } = await User.findOne({ spotifyId });
+
+	if (!refreshToken)
+		return res.status(401).json({ error: 'Refresh token not found' });
+
 	try {
-		const { spotifyId } = req.body;
-
-		const { refreshToken } = await User.findOne({ spotifyId });
-
 		const body = new URLSearchParams({
 			grant_type: 'refresh_token',
 			refresh_token: refreshToken,
@@ -187,14 +192,17 @@ loginRouter.post('/refresh', async (req, res) => {
 			params
 		);
 
-		const { access_token, expires_in } = newRefresh.data;
-		const refresh_token = newRefresh.data.refresh_token || refreshToken;
+		const { access_token, refresh_token, expires_in } = newRefresh.data;
+
+		const user = await User.findOne({ refreshToken });
+
+		if (!user) return res.status(404).json({ error: 'User not found' });
 
 		await User.findOneAndUpdate(
 			{ spotifyId },
 			{
 				accessToken: access_token,
-				refreshToken: refresh_token,
+				refreshToken: newRefresh.data.refresh_token || refreshToken,
 				expiresIn: expires_in,
 			}
 		);
@@ -204,7 +212,7 @@ loginRouter.post('/refresh', async (req, res) => {
 			expiresIn: expires_in,
 		});
 	} catch (error) {
-		console.error('Failed to refresh access token: ', error);
+		console.error('Error refreshing access token: ', error.response.data);
 		res.status(500).json({ error: 'Failed to refresh access token' });
 	}
 });

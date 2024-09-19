@@ -11,8 +11,8 @@ const getUser = async (code) => {
 	return res.data;
 };
 
-const refresh = async (spotifyId) => {
-	const res = await axios.post(`${baseUrl}/refresh`, spotifyId);
+const refresh = async () => {
+	const res = await axios.post(`${baseUrl}/refresh`);
 	return res.data;
 };
 

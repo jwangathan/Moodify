@@ -15,37 +15,42 @@ import { setUser } from './reducers/authReducer';
 import { initializeEntries } from './reducers/entryReducer';
 import { Background } from './components/DivStyles';
 
-function App() {
+const App = () => {
 	const dispatch = useDispatch();
-	const currUser = useSelector((state) => state.auth);
+	const user = useSelector((state) => state.auth);
 	const entries = useSelector((state) => state.entries);
-	const { isVisible } = useSelector((state) => state.countdown);
+	const { isCountdownVisible } = useSelector((state) => state.countdown);
+
+	const entryMatch = useMatch('/entries/:id');
+	const entryId = entryMatch ? entryMatch.params.id : null;
+	const selectedEntry = entryMatch
+		? entries.find((entry) => entry.id === entryId)
+		: null;
 
 	useEffect(() => {
-		const loggedUserJSON = window.localStorage.getItem('loggedUser');
-		if (loggedUserJSON) {
-			const user = JSON.parse(loggedUserJSON);
-			dispatch(setUser(user));
+		const storedUser = window.localStorage.getItem('user');
+
+		if (storedUser) {
+			const parsedUser = JSON.parse(storedUser);
+			dispatch(setUser(parsedUser));
 			dispatch(initializeEntries());
 		}
 	}, []);
 
-	const matchEntry = useMatch('/entries/:id');
-	const entry = matchEntry
-		? entries.find((entry) => entry.id === matchEntry.params.id)
-		: null;
-
 	return (
 		<Background>
-			{currUser && <Navigation />}
+			{user && <Navigation />}
 			<Notification />
-			{isVisible && <CountdownModal />}
-			{currUser ? (
+			{isCountdownVisible && <CountdownModal />}
+			{user ? (
 				<Routes>
 					<Route path="/" element={<UserPage />} />
 					<Route path="/survey" element={<QuestionPage />} />
 					<Route path="/entries" element={<EntryList />} />
-					<Route path="/entries/:id" element={<EntryView entry={entry} />} />
+					<Route
+						path="/entries/:id"
+						element={<EntryView entry={selectedEntry} />}
+					/>
 					<Route path="/entries/callback" element={<EntryCallbackPage />} />
 				</Routes>
 			) : (
@@ -56,6 +61,6 @@ function App() {
 			)}
 		</Background>
 	);
-}
+};
 
 export default App;

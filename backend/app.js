@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const app = express();
 require('express-async-errors');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const loginRouter = require('./controllers/login');
 const entryRouter = require('./controllers/entries');
 
@@ -25,6 +26,7 @@ mongoose
 	});
 
 app.use(cors());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.json());
 app.use(

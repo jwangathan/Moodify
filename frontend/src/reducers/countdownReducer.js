@@ -2,10 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const countdownSlice = createSlice({
 	name: 'countdown',
-	initialState: { isVisible: false },
+	initialState: { isCountdownVisible: false },
 	reducers: {
 		setCountdownDisplay: (state, action) => {
-			state.isVisible = action.payload;
+			state.isCountdownVisible = action.payload;
 		},
 	},
 });
