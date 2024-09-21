@@ -1,12 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import entryService from '../services/entries';
+import userService from '../services/users';
 import authService from '../services/auth';
 import setRefreshTimeout from '../hooks/setRefreshTimeout';
 
 /*
 const initialState = {
 	token: null,
-	expiresIn: null,
+	expiresAt: null,
 	topArtists: null,
 	topGenres: null,
 	topTracks: null,
@@ -24,12 +25,17 @@ const authSlice = createSlice({
 	reducers: {
 		setUser(state, action) {
 			const newState = { ...state, ...action.payload };
-			window.localStorage.setItem('user', JSON.stringify(newState));
+			const currUser = JSON.stringify({
+				userId: newState.user.spotifyId,
+				token: newState.token,
+				expiresAt: newState.expiresAt,
+				expiresIn: newState.expiresAt - Math.floor(Date.now() / 1000),
+			});
+			window.localStorage.setItem('user', JSON.stringify(currUser));
 			if (newState.token) {
-				console.log('SETTING TOKEN');
 				entryService.setToken(newState.token);
+				userService.setToken(newState.token);
 			}
-			console.log(newState);
 			return newState;
 		},
 		logout(state, action) {
@@ -45,7 +51,10 @@ export const loginUser = (code) => {
 			const res = await authService.getUser({ code });
 			await dispatch(setUser(res));
 			const { auth } = getState();
-			setRefreshTimeout({ dispatch, expiresIn: auth.expiresIn });
+			setRefreshTimeout({
+				dispatch,
+				expiresIn: auth.expiresAt - Math.floor(Date.now() / 1000),
+			});
 		} catch (error) {
 			console.error('Failed to login User: ', error);
 			dispatch(logout());
@@ -54,11 +63,15 @@ export const loginUser = (code) => {
 };
 
 export const refreshToken = () => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
 		try {
-			const res = await authService.refresh();
+			const { auth } = getState();
+			const res = await authService.refresh({ spotifyId: auth.user.spotifyId });
 			dispatch(setUser(res));
-			setRefreshTimeout({ dispatch, expiresIn: res.expiresIn });
+			setRefreshTimeout({
+				dispatch,
+				expiresIn: res.expiresAt - Math.floor(Date.now() / 1000),
+			});
 		} catch (error) {
 			console.error('Failed to refresh token: ', error);
 			dispatch(logout());

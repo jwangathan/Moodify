@@ -30,7 +30,6 @@ const EntryCallbackPage = () => {
 							emotion
 						)
 					);
-					console.log(newEntry);
 
 					navigate(`/entries/${newEntry.id}`);
 				}

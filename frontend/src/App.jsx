@@ -32,6 +32,8 @@ const App = () => {
 
 		if (storedUser) {
 			const parsedUser = JSON.parse(storedUser);
+			if (parsedUser.expiresAt < new Date().getTime()) {
+			}
 			dispatch(setUser(parsedUser));
 			dispatch(initializeEntries());
 		}

@@ -8,6 +8,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const loginRouter = require('./controllers/login');
 const entryRouter = require('./controllers/entries');
+const userRouter = require('./controllers/users');
 
 const middleware = require('./utils/middleware');
 const config = require('./utils/config');
@@ -39,6 +40,7 @@ app.use(
 app.use(middleware.tokenExtractor);
 
 app.use('/api/auth', loginRouter);
+app.use('/api/user', userRouter);
 app.use('/api/entry', middleware.userExtractor, entryRouter);
 
 app.get('/*', (req, res) => {

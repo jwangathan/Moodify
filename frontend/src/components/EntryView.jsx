@@ -45,7 +45,6 @@ const EntryView = ({ entry }) => {
 	const [selectedTrackIds, setSelectedTrackIds] = useState([]);
 
 	const storedTracks = entry && entry.playlist.tracks;
-	console.log('entry: ', entry);
 
 	useEffect(() => {
 		if (storedTracks && storedTracks.length > 0)

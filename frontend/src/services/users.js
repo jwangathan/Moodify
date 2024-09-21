@@ -7,6 +7,11 @@ const setToken = (newToken) => {
 	token = `Bearer ${newToken}`;
 };
 
+const getUserById = async (spotifyId) => {
+	const res = await axios.get(`/api/user/${spotifyId}`);
+	return res.data;
+};
+
 const getTopArtists = async () => {
 	const config = {
 		headers: { Authorization: token },
@@ -27,4 +32,4 @@ const getTopTracks = async () => {
 	return res.data;
 };
 
-export default { setToken, getTopArtists, getTopTracks };
+export default { getUserById, setToken, getTopArtists, getTopTracks };

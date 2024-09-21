@@ -2,11 +2,6 @@ const loginRouter = require('express').Router();
 const axios = require('axios');
 const User = require('../models/user');
 const baseURL = 'https://api.spotify.com/v1';
-const COOKIE_OPTIONS = {
-	httpOnly: true,
-	secure: process.env.NODE_ENV === 'production',
-	sameSite: 'Lax',
-};
 
 const generateCode = async () => {
 	const possible =
@@ -87,6 +82,8 @@ loginRouter.get('/callback', async (req, res) => {
 
 		const { access_token, refresh_token, expires_in } = tokenRes.data;
 
+		const expiresAt = Math.floor(Date.now() / 1000) + expires_in;
+
 		const userRes = await axios.get(`${baseURL}/me`, {
 			headers: {
 				Authorization: `Bearer ${access_token}`,
@@ -138,7 +135,7 @@ loginRouter.get('/callback', async (req, res) => {
 				spotifyId,
 				accessToken: access_token,
 				refreshToken: refresh_token,
-				expiresIn: Math.floor(Date.now() / 1000) + expires_in,
+				expiresAt,
 				profileImage: profileImage,
 				displayName: display_name,
 				topArtists: topArtists.slice(0, 10),
@@ -150,7 +147,7 @@ loginRouter.get('/callback', async (req, res) => {
 
 		res.status(200).json({
 			token: access_token,
-			expiresIn: expires_in,
+			expiresAt,
 			topArtists: topArtists.slice(0, 10),
 			topGenres,
 			topTracks,
@@ -161,7 +158,7 @@ loginRouter.get('/callback', async (req, res) => {
 			},
 		});
 	} catch (error) {
-		console.log('Error during Spotify token exchange: ', error.response.data);
+		console.log('Error during Spotify token exchange: ', error);
 		res.status(500).send('Token exchange failed');
 	}
 });
@@ -198,18 +195,20 @@ loginRouter.post('/refresh', async (req, res) => {
 
 		if (!user) return res.status(404).json({ error: 'User not found' });
 
+		const expiresAt = Math.floor(Date.now() / 1000) + expires_in;
+
 		await User.findOneAndUpdate(
 			{ spotifyId },
 			{
 				accessToken: access_token,
-				refreshToken: newRefresh.data.refresh_token || refreshToken,
-				expiresIn: expires_in,
+				refreshToken: refresh_token || refreshToken,
+				expiresAt,
 			}
 		);
 
 		res.status(200).json({
 			token: access_token,
-			expiresIn: expires_in,
+			expiresAt,
 		});
 	} catch (error) {
 		console.error('Error refreshing access token: ', error.response.data);
