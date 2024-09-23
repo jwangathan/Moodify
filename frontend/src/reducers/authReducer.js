@@ -31,7 +31,7 @@ const authSlice = createSlice({
 				expiresAt: newState.expiresAt,
 				expiresIn: newState.expiresAt - Math.floor(Date.now() / 1000),
 			});
-			window.localStorage.setItem('user', JSON.stringify(currUser));
+			window.localStorage.setItem('user', currUser);
 			if (newState.token) {
 				entryService.setToken(newState.token);
 				userService.setToken(newState.token);
@@ -40,6 +40,8 @@ const authSlice = createSlice({
 		},
 		logout(state, action) {
 			window.localStorage.clear();
+			entryService.resetToken();
+			userService.resetToken();
 			return null;
 		},
 	},
@@ -74,6 +76,19 @@ export const refreshToken = () => {
 			});
 		} catch (error) {
 			console.error('Failed to refresh token: ', error);
+			dispatch(logout());
+		}
+	};
+};
+
+export const restoreUser = (spotifyId) => {
+	return async (dispatch) => {
+		try {
+			const res = await userService.getUserById({ spotifyId });
+			console.log(res);
+			//dispatch(setUser(res));
+		} catch (error) {
+			console.error('Failed to restore user: ', error);
 			dispatch(logout());
 		}
 	};

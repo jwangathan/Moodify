@@ -1,11 +1,13 @@
 const userRouter = require('express').Router();
 const User = require('../models/user');
-const axios = require('axios');
 
 userRouter.get('/:id', async (req, res) => {
 	const id = req.params.id;
 	try {
-		const user = await User.find({ id }).exec();
+		const user = await User.find(
+			{ id },
+			'accessToken expiresAt topArtists topGenres topTracks spotifyId displayName profileImage'
+		).exec();
 		if (!user) {
 			return res
 				.status(404)

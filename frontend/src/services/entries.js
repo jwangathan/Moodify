@@ -7,6 +7,10 @@ const setToken = (newToken) => {
 	token = `Bearer ${newToken}`;
 };
 
+const resetToken = () => {
+	token = null;
+};
+
 const getAll = async () => {
 	const config = {
 		headers: { Authorization: token },
@@ -36,4 +40,11 @@ const managePlaylist = async (id, selectedTracks) => {
 	return res.data;
 };
 
-export default { setToken, getAll, getEntry, createEntry, managePlaylist };
+export default {
+	setToken,
+	resetToken,
+	getAll,
+	getEntry,
+	createEntry,
+	managePlaylist,
+};
