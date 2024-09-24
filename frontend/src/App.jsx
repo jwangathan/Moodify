@@ -11,8 +11,7 @@ import Notification from './components/Notification';
 import CountdownModal from './components/CountdownModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { restoreUser, setUser } from './reducers/authReducer';
-import { initializeEntries } from './reducers/entryReducer';
+import { restoreUser, logout } from './reducers/authReducer';
 import { Background } from './components/DivStyles';
 
 const App = () => {
@@ -29,15 +28,13 @@ const App = () => {
 
 	useEffect(() => {
 		const storedUser = window.localStorage.getItem('user');
-
 		if (storedUser) {
 			const parsedUser = JSON.parse(storedUser);
-			if (parsedUser.expiresAt <= Date.now()) {
+			if (parsedUser.expiresAt <= Math.floor(Date.now() / 1000)) {
 				//if the session is expired, log out
 				dispatch(logout());
 			} else {
-				dispatch(restoreUser(parsedUser.spotifyId)); // problems with this running on login and not just on refresh
-				dispatch(initializeEntries());
+				dispatch(restoreUser(parsedUser.spotifyId));
 			}
 		}
 	}, []);

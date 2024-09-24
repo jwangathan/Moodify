@@ -1,5 +1,6 @@
 import axios from 'axios';
-const baseUrl = 'https://api.spotify.com/v1';
+const spotifyUrl = 'https://api.spotify.com/v1';
+const baseUrl = '/api/user';
 
 let token = null;
 
@@ -12,7 +13,7 @@ const resetToken = () => {
 };
 
 const getUserById = async (spotifyId) => {
-	const res = await axios.get(`/api/user/${spotifyId}`);
+	const res = await axios.get(`${baseUrl}/${spotifyId}`);
 	return res.data;
 };
 
@@ -22,7 +23,7 @@ const getTopArtists = async () => {
 		params: { limit: 50 },
 	};
 
-	const res = await axios.get(`${baseUrl}/me/top/artists`, config);
+	const res = await axios.get(`${spotifyUrl}/me/top/artists`, config);
 	return res.data;
 };
 
@@ -32,7 +33,7 @@ const getTopTracks = async () => {
 		params: { limit: 20 },
 	};
 
-	const res = await axios.get(`${baseUrl}/me/top/tracks`, config);
+	const res = await axios.get(`${spotifyUrl}/me/top/tracks`, config);
 	return res.data;
 };
 

@@ -3,6 +3,7 @@ import entryService from '../services/entries';
 import userService from '../services/users';
 import authService from '../services/auth';
 import setRefreshTimeout from '../hooks/setRefreshTimeout';
+import { initializeEntries } from './entryReducer';
 
 /*
 const initialState = {
@@ -26,7 +27,7 @@ const authSlice = createSlice({
 		setUser(state, action) {
 			const newState = { ...state, ...action.payload };
 			const currUser = JSON.stringify({
-				userId: newState.user.spotifyId,
+				spotifyId: newState.user.spotifyId,
 				token: newState.token,
 				expiresAt: newState.expiresAt,
 				expiresIn: newState.expiresAt - Math.floor(Date.now() / 1000),
@@ -84,9 +85,9 @@ export const refreshToken = () => {
 export const restoreUser = (spotifyId) => {
 	return async (dispatch) => {
 		try {
-			const res = await userService.getUserById({ spotifyId });
-			console.log(res);
-			//dispatch(setUser(res));
+			const res = await userService.getUserById(spotifyId);
+			dispatch(setUser(res));
+			dispatch(initializeEntries());
 		} catch (error) {
 			console.error('Failed to restore user: ', error);
 			dispatch(logout());
