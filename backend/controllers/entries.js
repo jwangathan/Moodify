@@ -185,4 +185,26 @@ entryRouter.put('/:id', async (req, res) => {
 	}
 });
 
+entryRouter.delete('/:id', async (req, res) => {
+	const user = req.user;
+
+	const entry = await Entry.findById(req.params.id);
+	if (!entry) {
+		return res.status(404).json({ error: 'Entry not found' });
+	}
+
+	if (entry.user.toString() !== user.id.toString()) {
+		return res
+			.status(401)
+			.json({ error: 'You are not authorized to delete this entry' });
+	}
+
+	await User.findByIdAndUpdate(user.id, {
+		$pull: { entryHistory: req.params.id },
+	});
+
+	await Entry.findByIdAndDelete(req.params.id);
+	res.status(204).end();
+});
+
 module.exports = entryRouter;

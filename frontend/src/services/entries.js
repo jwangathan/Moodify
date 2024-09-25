@@ -40,6 +40,15 @@ const managePlaylist = async (id, selectedTracks) => {
 	return res.data;
 };
 
+const deleteEntry = async (id) => {
+	const config = {
+		headers: { Authorization: token },
+	};
+
+	const res = await axios.delete(`${baseUrl}/${id}`, config);
+	return res.data;
+};
+
 export default {
 	setToken,
 	resetToken,
@@ -47,4 +56,5 @@ export default {
 	getEntry,
 	createEntry,
 	managePlaylist,
+	deleteEntry,
 };

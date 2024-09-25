@@ -62,6 +62,13 @@ const EntryView = ({ entry }) => {
 		dispatch(updatePlaylist(entry.id, selectedTrackIds));
 	};
 
+	const handleDelete = (entry) => {
+		if (window.confirm('Are you sure you want to delete this entry?')) {
+			dispatch(deleteEntry(entry.id));
+			navigate('/entries');
+		}
+	};
+
 	return (
 		<div>
 			{entry && (
@@ -70,6 +77,13 @@ const EntryView = ({ entry }) => {
 					<BackButton onClick={() => navigate('/entries')}>
 						Return to Entries
 					</BackButton>
+					<button
+						onClick={() => {
+							handleDelete(entry);
+						}}
+					>
+						Remove Entry
+					</button>
 					<GridContainer>
 						{entry.tracks.map((track) => (
 							<Track

@@ -22,6 +22,11 @@ const entrySlice = createSlice({
 		setEntries(state, action) {
 			return action.payload;
 		},
+		removeEntry(state, action) {
+			const id = action.payload;
+			const newEntryList = state.filter((e) => e.id !== id);
+			return newEntryList;
+		},
 	},
 });
 
@@ -76,5 +81,13 @@ export const updatePlaylist = (id, selectedTracks) => {
 // 	}
 // }
 
-export const { updateEntry, appendEntry, setEntries } = entrySlice.actions;
+export const deleteEntry = (id) => {
+	return async (dispatch) => {
+		await entryService.deleteEntry(id);
+		dispatch(removeEntry(id));
+	};
+};
+
+export const { updateEntry, appendEntry, setEntries, removeEntry } =
+	entrySlice.actions;
 export default entrySlice.reducer;

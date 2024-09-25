@@ -44,23 +44,25 @@ const App = () => {
 			{user && <Navigation />}
 			<Notification />
 			{isCountdownVisible && <CountdownModal />}
-			{user ? (
-				<Routes>
-					<Route path="/" element={<UserPage />} />
-					<Route path="/survey" element={<QuestionPage />} />
-					<Route path="/entries" element={<EntryList />} />
-					<Route
-						path="/entries/:id"
-						element={<EntryView entry={selectedEntry} />}
-					/>
-					<Route path="/entries/callback" element={<EntryCallbackPage />} />
-				</Routes>
-			) : (
-				<Routes>
-					<Route path="/" element={<HomePage />} />
-					<Route path="/auth/callback/*" element={<LoginCallbackPage />} />
-				</Routes>
-			)}
+			<Routes>
+				<Route path="/auth/callback" element={<LoginCallbackPage />} />
+				{user ? (
+					<>
+						<Route path="/" element={<UserPage />} />
+						<Route path="/survey" element={<QuestionPage />} />
+						<Route path="/entries" element={<EntryList />} />
+						<Route
+							path="/entries/:id"
+							element={<EntryView entry={selectedEntry} />}
+						/>
+						<Route path="/entries/callback" element={<EntryCallbackPage />} />
+					</>
+				) : (
+					<>
+						<Route path="/" element={<HomePage />} />
+					</>
+				)}
+			</Routes>
 		</Background>
 	);
 };
