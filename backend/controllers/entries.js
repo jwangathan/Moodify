@@ -1,5 +1,6 @@
 const entryRouter = require('express').Router();
 const Entry = require('../models/entry');
+const User = require('../models/user');
 const { model } = require('../utils/config');
 const {
 	toJSON,

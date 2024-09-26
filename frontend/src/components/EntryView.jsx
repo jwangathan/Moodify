@@ -13,7 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { updatePlaylist } from '../reducers/entryReducer';
+import { updatePlaylist, deleteEntry } from '../reducers/entryReducer';
 
 const Track = ({ track, onSelect, isSelected }) => {
 	return (
@@ -51,12 +51,14 @@ const EntryView = ({ entry }) => {
 			setSelectedTrackIds(storedTracks);
 	}, [storedTracks]);
 
-	const toggleSelectedTrack = (trackId) =>
+	const toggleSelectedTrack = (trackId) => {
+		console.log('SELECTED: ', trackId);
 		setSelectedTrackIds((prevIds) =>
 			prevIds.includes(trackId)
 				? prevIds.filter((id) => id !== trackId)
 				: [...prevIds, trackId]
 		);
+	};
 
 	const updateEntryPlaylist = async () => {
 		dispatch(updatePlaylist(entry.id, selectedTrackIds));
