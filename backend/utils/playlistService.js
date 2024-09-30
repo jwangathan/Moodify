@@ -60,6 +60,40 @@ const getRecommendations = async (
 	}
 };
 
+const arraysNotEqual = (arr1, arr2) => {
+	if (arr1.length !== arr2.length) {
+		return true;
+	}
+
+	const sortedArr1 = arr1.slice().sort();
+	const sortedArr2 = arr2.slice().sort();
+
+	for (let i = 0; i < sortedArr1.length; i++) {
+		if (sortedArr1[i] !== sortedArr2[i]) {
+			return true;
+		}
+	}
+	return false;
+};
+
+const getPlaylist = async (playlistId, token) => {
+	try {
+		const config = {
+			params: {
+				fields: 'id, snapshot_id, tracks.items(track.id)',
+			},
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		};
+		const res = await axios.get(`${baseUrl}/playlists/${playlistId}`, config);
+		return res.data;
+	} catch (error) {
+		console.error('Error getting playlist: ', error.response?.data || error);
+		throw new Error('Failed to get playlist');
+	}
+};
+
 const createPlaylist = async (spotifyId, mood, token) => {
 	try {
 		const body = {
@@ -151,6 +185,8 @@ const removeTracksFromPlaylist = async (
 module.exports = {
 	toJSON,
 	getRecommendations,
+	arraysNotEqual,
+	getPlaylist,
 	createPlaylist,
 	addTracksToPlaylist,
 	removeTracksFromPlaylist,

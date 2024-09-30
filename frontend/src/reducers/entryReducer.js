@@ -1,8 +1,8 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import entryService from '../services/entries';
 
 // user: {spotifyId}, situation, emotion, attributes,
-// recommendations: {seedTracks, seedArtists, seedGenres, tracks: {id, name, artists: {id, name}, album: {id, name, image}, previewUrl, externalUrl}}
+// tracks: {id, name, artists: {id, name}, album: {id, name, image}, previewUrl, externalUrl}}
 // playlist: { id, name }
 
 const entrySlice = createSlice({
@@ -64,7 +64,7 @@ export const createEntry = (
 export const updatePlaylist = (id, selectedTracks) => {
 	return async (dispatch) => {
 		try {
-			const newEntry = await entryService.managePlaylist(id, selectedTracks);
+			const newEntry = await entryService.updatePlaylist(id, selectedTracks);
 			dispatch(updateEntry(newEntry));
 		} catch (error) {
 			console.error(error);

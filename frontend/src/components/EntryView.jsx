@@ -25,13 +25,15 @@ const Track = ({ track, onSelect, isSelected }) => {
 					{track.artists.map((artist) => artist.name).join(', ')}
 				</ArtistName>
 				<AlbumName>{track.album.name}</AlbumName>
-				{track.previewUrl && (
+				{track.previewUrl ? (
 					<audio controls>
 						<source src={track.previewUrl} type="audio/mpeg" />
 						Your browser does not support the audio element
 					</audio>
+				) : (
+					<p>Song preview unavailable</p>
 				)}
-				<SelectButton onClick={() => onSelect(track)} selected={isSelected}>
+				<SelectButton onClick={() => onSelect(track.id)} selected={isSelected}>
 					{isSelected ? 'Selected' : 'Add to Playlist'}
 				</SelectButton>
 			</TrackDetails>
@@ -44,15 +46,13 @@ const EntryView = ({ entry }) => {
 	const dispatch = useDispatch();
 	const [selectedTrackIds, setSelectedTrackIds] = useState([]);
 
-	const storedTracks = entry && entry.playlist.tracks;
-
 	useEffect(() => {
-		if (storedTracks && storedTracks.length > 0)
-			setSelectedTrackIds(storedTracks);
-	}, [storedTracks]);
+		const storedTracks = entry?.playlist?.tracks || [];
+		console.log("STOREDTRACKS: ", storedTracks);
+		setSelectedTrackIds(storedTracks);
+	}, [entry]);
 
-	const toggleSelectedTrack = (trackId) => {
-		console.log('SELECTED: ', trackId);
+	const handleSelect = (trackId) => {
 		setSelectedTrackIds((prevIds) =>
 			prevIds.includes(trackId)
 				? prevIds.filter((id) => id !== trackId)
@@ -91,7 +91,7 @@ const EntryView = ({ entry }) => {
 							<Track
 								key={track.id}
 								track={track}
-								onSelect={toggleSelectedTrack}
+								onSelect={handleSelect}
 								isSelected={selectedTrackIds.includes(track.id)}
 							/>
 						))}

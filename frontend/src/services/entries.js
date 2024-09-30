@@ -32,7 +32,7 @@ const createEntry = async (newEntry) => {
 	return res.data;
 };
 
-const managePlaylist = async (id, selectedTracks) => {
+const updatePlaylist = async (id, selectedTracks) => {
 	const config = {
 		headers: { Authorization: token },
 	};
@@ -55,6 +55,6 @@ export default {
 	getAll,
 	getEntry,
 	createEntry,
-	managePlaylist,
+	updatePlaylist,
 	deleteEntry,
 };

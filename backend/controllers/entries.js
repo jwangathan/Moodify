@@ -5,6 +5,8 @@ const { model } = require('../utils/config');
 const {
 	toJSON,
 	getRecommendations,
+	arraysNotEqual,
+	getPlaylist,
 	createPlaylist,
 	addTracksToPlaylist,
 	removeTracksFromPlaylist,
@@ -29,9 +31,33 @@ entryRouter.get('/:id', async (req, res) => {
 		if (!entry) {
 			return res.status(404).json({ error: `Entry not found with ID ${id}` });
 		}
-		return res.json(entry);
+		if (entry.user.toString() !== req.user.id.toString()) {
+			return res
+				.status(401)
+				.json({ error: 'You are not authorized to view this entry' });
+		}
+
+		//if a playlist exists, check it
+		if (entry.playlist.id) {
+			const { id, snapshot_id, tracks } = await getPlaylist(
+				entry.playlist.id,
+				req.token
+			);
+			const selected = tracks.items.map((t) => t.track.id);
+			//if the values are different, update them
+			if (
+				snapshot_id !== entry.playlist.snapshot &&
+				arraysNotEqual(selected, entry.playlist.selectedTracks)
+			) {
+				entry.playlist = { id, snapshot_id, selectedTracks: selected };
+				await entry.save();
+				return res.json({ message: 'Playlist updated', entry });
+			}
+		}
+
+		return res.json({ message: 'No update needed', entry });
 	} catch (err) {
-		return res.status(500).json({ error: 'Internal Server Error' });
+		return res.status(500).json({ error: 'Error retrieving/updating entry' });
 	}
 });
 
@@ -133,7 +159,7 @@ entryRouter.put('/:id', async (req, res) => {
 			targetEntry.playlist = {
 				id: newPlaylist.id,
 				snapshot: snapshot,
-				tracks: selectedTracks,
+				selectedTracks: selectedTracks,
 			};
 
 			await targetEntry.save();
@@ -144,7 +170,7 @@ entryRouter.put('/:id', async (req, res) => {
 				playlist: targetEntry.playlist,
 			});
 		} else {
-			const oldSelectedSongs = targetEntry.playlist.tracks;
+			const oldSelectedSongs = targetEntry.playlist.selectedTracks;
 			const songsToAdd = selectedTracks.filter(
 				(song) => !oldSelectedSongs.includes(song)
 			);
@@ -169,10 +195,10 @@ entryRouter.put('/:id', async (req, res) => {
 					token
 				));
 
-			targetEntry.playlist.tracks = selectedTracks;
+			targetEntry.playlist.selectedTracks = selectedTracks;
 			targetEntry.playlist.snapshot = snapshot;
 
-			newEntry = await targetEntry.save();
+			await targetEntry.save();
 
 			return res.status(201).json({
 				message: 'Playlist updated in Spotify and saved to database',

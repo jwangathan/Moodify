@@ -22,7 +22,7 @@ const entrySchema = new mongoose.Schema({
 	playlist: {
 		id: { type: String, default: null },
 		snapshot: { type: String, default: null },
-		selectedSongs: [{ type: String }],
+		selectedTracks: [{ type: String }],
 	},
 	createdAt: { type: Date, default: Date.now },
 });
