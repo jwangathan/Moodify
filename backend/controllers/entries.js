@@ -39,23 +39,46 @@ entryRouter.get('/:id', async (req, res) => {
 
 		//if a playlist exists, check it
 		if (entry.playlist.id) {
-			const { id, snapshot_id, tracks } = await getPlaylist(
-				entry.playlist.id,
-				req.token
-			);
-			const selected = tracks.items.map((t) => t.track.id);
-			//if the values are different, update them
-			if (
-				snapshot_id !== entry.playlist.snapshot &&
-				arraysNotEqual(selected, entry.playlist.selectedTracks)
-			) {
-				entry.playlist = { id, snapshot_id, selectedTracks: selected };
-				await entry.save();
-				return res.json({ message: 'Playlist updated', entry });
+			try {
+				const { id, snapshot_id, tracks } = await getPlaylist(
+					entry.playlist.id,
+					req.token
+				);
+				const selectedTracks = tracks.items.map((t) => t.track.id);
+				const includedTracks = entry.tracks.map((t) => t.id);
+				const matchingTracks = selectedTracks.filter((t) =>
+					includedTracks.includes(t)
+				);
+
+				//if the values are different, update them
+				if (
+					snapshot_id !== entry.playlist.snapshot &&
+					arraysNotEqual(matchingTracks, entry.playlist.selectedTracks)
+				) {
+					entry.playlist = { id, snapshot_id, selectedTracks: matchingTracks };
+					await entry.save();
+					return res.json({ message: 'Playlist updated', entry });
+				}
+			} catch (err) {
+				if (err.response?.status === 404) {
+					entry.playlist = { id: null, snapshot_id: null, selectedTracks: [] };
+					await entry.save();
+					return res.json({
+						message: 'Playlist deleted and entry updated',
+						id: entry.id,
+						entry,
+					});
+				} else {
+					console.error(
+						'Error retrieving playlist: ',
+						err.response?.data || err
+					);
+					return res.status(500).json({ error: 'Error retrieving playlist' });
+				}
 			}
 		}
 
-		return res.json({ message: 'No update needed', entry });
+		return res.json({ message: 'No update needed', id: entry.id, entry });
 	} catch (err) {
 		return res.status(500).json({ error: 'Error retrieving/updating entry' });
 	}
@@ -167,7 +190,7 @@ entryRouter.put('/:id', async (req, res) => {
 			return res.status(201).json({
 				message: 'Playlist created and songs added to Spotify',
 				id,
-				playlist: targetEntry.playlist,
+				entry: targetEntry,
 			});
 		} else {
 			const oldSelectedSongs = targetEntry.playlist.selectedTracks;
@@ -203,7 +226,7 @@ entryRouter.put('/:id', async (req, res) => {
 			return res.status(201).json({
 				message: 'Playlist updated in Spotify and saved to database',
 				id,
-				playlist: targetEntry.playlist,
+				entry: targetEntry,
 			});
 		}
 	} catch (error) {

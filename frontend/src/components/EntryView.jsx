@@ -13,7 +13,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { updatePlaylist, deleteEntry } from '../reducers/entryReducer';
+import {
+	updatePlaylist,
+	deleteEntry,
+	fetchEntryById,
+} from '../reducers/entryReducer';
 
 const Track = ({ track, onSelect, isSelected }) => {
 	return (
@@ -47,9 +51,19 @@ const EntryView = ({ entry }) => {
 	const [selectedTrackIds, setSelectedTrackIds] = useState([]);
 
 	useEffect(() => {
-		const storedTracks = entry?.playlist?.tracks || [];
-		console.log("STOREDTRACKS: ", storedTracks);
+		const fetchPlaylistState = async () => {
+			if (entry && entry.playlist.id) {
+				const { playlist } = await dispatch(fetchEntryById(entry.id)); //infinite loop because this updates entry
+				if (playlist.selectedTracks) {
+					setSelectedTrackIds(playlist.selectedTracks);
+				}
+			}
+		};
+		console.log('HELLO');
+		const storedTracks = entry?.playlist?.selectedTracks || [];
 		setSelectedTrackIds(storedTracks);
+
+		fetchPlaylistState();
 	}, [entry]);
 
 	const handleSelect = (trackId) => {

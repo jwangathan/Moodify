@@ -88,9 +88,14 @@ const getPlaylist = async (playlistId, token) => {
 		};
 		const res = await axios.get(`${baseUrl}/playlists/${playlistId}`, config);
 		return res.data;
-	} catch (error) {
-		console.error('Error getting playlist: ', error.response?.data || error);
-		throw new Error('Failed to get playlist');
+	} catch (err) {
+		if (err.response?.status === 404) {
+			console.error(`Playlist with ID ${playlistId} not found`);
+			throw new Error('PlaylistNotFound');
+		} else {
+			console.error('Error getting playlist: ', err.response?.data || err);
+			throw new Error('FailedToGetPlaylist');
+		}
 	}
 };
 
@@ -168,7 +173,6 @@ const removeTracksFromPlaylist = async (
 				'Content-Type': 'application/json',
 			},
 		};
-		console.log(params);
 
 		const res = await axios.delete(
 			`${baseUrl}/playlists/${playlistId}/tracks`,

@@ -20,7 +20,10 @@ const getAll = async () => {
 };
 
 const getEntry = async (id) => {
-	const res = await axios.get(`${baseUrl}/${id}`);
+	const config = {
+		headers: { Authorization: token },
+	};
+	const res = await axios.get(`${baseUrl}/${id}`, config);
 	return res.data;
 };
 

@@ -11,10 +11,8 @@ const entrySlice = createSlice({
 	reducers: {
 		updateEntry(state, action) {
 			const id = action.payload.id;
-			const playlist = action.payload.playlist;
-			return state.map((entry) =>
-				entry.id !== id ? entry : { ...entry, playlist: playlist }
-			);
+			const newEntry = action.payload.entry;
+			return state.map((entry) => (entry.id !== id ? entry : newEntry));
 		},
 		appendEntry(state, action) {
 			state.push(action.payload);
@@ -55,8 +53,8 @@ export const createEntry = (
 			});
 			dispatch(appendEntry(res));
 			return res;
-		} catch (error) {
-			console.log(error);
+		} catch (err) {
+			console.log(err);
 		}
 	};
 };
@@ -66,20 +64,23 @@ export const updatePlaylist = (id, selectedTracks) => {
 		try {
 			const newEntry = await entryService.updatePlaylist(id, selectedTracks);
 			dispatch(updateEntry(newEntry));
-		} catch (error) {
-			console.error(error);
+		} catch (err) {
+			console.error(err);
 		}
 	};
 };
 
-// export const fetchEntryById = (id) => {
-// 	return async (dispatch) => {
-// 		try {
-// 			const res = await entryService.getEntry(id)
-// 			dispatch()
-// 		}
-// 	}
-// }
+export const fetchEntryById = (id) => {
+	return async (dispatch) => {
+		try {
+			const entry = await entryService.getEntry(id);
+			dispatch(updateEntry(entry));
+			return entry.entry;
+		} catch (err) {
+			console.error(err);
+		}
+	};
+};
 
 export const deleteEntry = (id) => {
 	return async (dispatch) => {
