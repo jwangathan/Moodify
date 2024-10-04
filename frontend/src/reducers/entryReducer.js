@@ -74,7 +74,7 @@ export const fetchEntryById = (id) => {
 	return async (dispatch) => {
 		try {
 			const entry = await entryService.getEntry(id);
-			dispatch(updateEntry(entry));
+			if (entry.updated) dispatch(updateEntry(entry));
 			return entry.entry;
 		} catch (err) {
 			console.error(err);

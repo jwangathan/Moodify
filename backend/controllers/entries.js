@@ -57,14 +57,17 @@ entryRouter.get('/:id', async (req, res) => {
 				) {
 					entry.playlist = { id, snapshot_id, selectedTracks: matchingTracks };
 					await entry.save();
-					return res.json({ message: 'Playlist updated', entry });
+					return res.json({ updated: true, id: entry.id, entry });
+				} else {
+					//if values are the same
+					return res.json({ updated: false, id: entry.id, entry });
 				}
 			} catch (err) {
 				if (err.response?.status === 404) {
 					entry.playlist = { id: null, snapshot_id: null, selectedTracks: [] };
 					await entry.save();
 					return res.json({
-						message: 'Playlist deleted and entry updated',
+						updated: true,
 						id: entry.id,
 						entry,
 					});
