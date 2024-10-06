@@ -1,16 +1,16 @@
-# fly.toml app configuration file generated for moodplay on 2024-07-24T00:40:24-07:00
+# fly.toml app configuration file generated for moodify on 2024-10-06T02:54:35-07:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'moodplay'
-primary_region = 'sjc'
+app = 'moodify'
+primary_region = 'lax'
 
 [build]
 
 [env]
   PORT = "3000"
-  CLIENT_URL = "https://moodplay.fly.dev"
+  CLIENT_URL = "https://moodify.fly.dev"
 
 [http_service]
   internal_port = 3000
