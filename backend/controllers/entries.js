@@ -7,6 +7,7 @@ const {
 	getRecommendations,
 	arraysNotEqual,
 	getPlaylist,
+	checkPlaylist,
 	createPlaylist,
 	addTracksToPlaylist,
 	removeTracksFromPlaylist,
@@ -40,10 +41,17 @@ entryRouter.get('/:id', async (req, res) => {
 		//if a playlist exists, check it
 		if (entry.playlist.id) {
 			try {
-				const { id, snapshot_id, tracks } = await getPlaylist(
-					entry.playlist.id,
-					req.token
-				);
+				const {
+					exists,
+					playlist: { id, snapshot_id, tracks },
+				} = await getPlaylist(entry.playlist.id, req.token);
+
+				if (!exists) {
+					entry.playlist = { id: null, snapshot_id: null, selectedTracks: [] };
+					await entry.save();
+					return res.json({ updated: true, id: entry.id, entry });
+				}
+
 				const selectedTracks = tracks.items.map((t) => t.track.id);
 				const includedTracks = entry.tracks.map((t) => t.id);
 				const matchingTracks = selectedTracks.filter((t) =>
@@ -55,7 +63,11 @@ entryRouter.get('/:id', async (req, res) => {
 					snapshot_id !== entry.playlist.snapshot &&
 					arraysNotEqual(matchingTracks, entry.playlist.selectedTracks)
 				) {
-					entry.playlist = { id, snapshot_id, selectedTracks: matchingTracks };
+					entry.playlist = {
+						id,
+						snapshot_id,
+						selectedTracks: matchingTracks,
+					};
 					await entry.save();
 					return res.json({ updated: true, id: entry.id, entry });
 				} else {
@@ -63,21 +75,8 @@ entryRouter.get('/:id', async (req, res) => {
 					return res.json({ updated: false, id: entry.id, entry });
 				}
 			} catch (err) {
-				if (err.response?.status === 404) {
-					entry.playlist = { id: null, snapshot_id: null, selectedTracks: [] };
-					await entry.save();
-					return res.json({
-						updated: true,
-						id: entry.id,
-						entry,
-					});
-				} else {
-					console.error(
-						'Error retrieving playlist: ',
-						err.response?.data || err
-					);
-					return res.status(500).json({ error: 'Error retrieving playlist' });
-				}
+				console.error('Error retrieving playlist: ', err.response?.data || err);
+				return res.status(500).json({ error: 'Error retrieving playlist' });
 			}
 		}
 
@@ -167,6 +166,16 @@ entryRouter.put('/:id', async (req, res) => {
 
 		if (!targetEntry) {
 			return res.status(404).json({ error: 'Entry not found' });
+		}
+
+		//check if playlist exists
+		if (targetEntry.playlist && targetEntry.playlist.id) {
+			const playlistId = targetEntry.playlist.id;
+			const playlist = await getPlaylist(playlistId, token);
+			if (!playlist.exists) {
+				targetEntry.playlist = { id: null, snapshot: null, selectedTracks: [] };
+				await targetEntry.save();
+			}
 		}
 
 		if (!targetEntry.playlist || !targetEntry.playlist.id) {

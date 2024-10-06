@@ -43,7 +43,7 @@ loginRouter.get('/login', async (req, res) => {
 		response_type: 'code',
 		client_id: process.env.CLIENT_ID,
 		scope:
-			'user-read-private user-read-email user-top-read playlist-modify-private playlist-modify-public',
+			'user-read-private user-read-email user-top-read playlist-modify-private playlist-modify-public playlist-read-private',
 		state,
 		code_challenge_method: 'S256',
 		code_challenge: code_challenge_base64,

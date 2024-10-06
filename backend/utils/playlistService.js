@@ -78,7 +78,7 @@ const arraysNotEqual = (arr1, arr2) => {
 
 const getPlaylist = async (playlistId, token) => {
 	try {
-		const config = {
+		let config = {
 			params: {
 				fields: 'id, snapshot_id, tracks.items(track.id)',
 			},
@@ -87,16 +87,55 @@ const getPlaylist = async (playlistId, token) => {
 			},
 		};
 		const res = await axios.get(`${baseUrl}/playlists/${playlistId}`, config);
-		return res.data;
+
+		const targetId = res.data.id;
+
+		if (await checkPlaylist(targetId, token)) {
+			//if playlist exists
+			return {
+				exists: true,
+				playlist: res.data,
+			};
+		}
+		return {
+			exists: false,
+			playlist: { id: null, snapshot_id: null, tracks: [] },
+		};
 	} catch (err) {
-		if (err.response?.status === 404) {
-			console.error(`Playlist with ID ${playlistId} not found`);
-			throw new Error('PlaylistNotFound');
-		} else {
-			console.error('Error getting playlist: ', err.response?.data || err);
-			throw new Error('FailedToGetPlaylist');
+		console.error('Error getting playlist: ', err.response?.data || err);
+		throw new Error('FailedToGetPlaylist');
+	}
+};
+
+const checkPlaylist = async (targetId, token) => {
+	let url = `${baseUrl}/me/playlists`;
+	let playlistFound = false;
+
+	while (url) {
+		try {
+			const config = {
+				params: { limit: 50 },
+				headers: { Authorization: `Bearer ${token}` },
+			};
+
+			const currPlaylists = await axios.get(url, config);
+			const playlists = currPlaylists.data.items;
+
+			playlistFound = playlists.some((playlist) => playlist.id === targetId);
+
+			if (playlistFound) {
+				console.log('PLAYLIST FOUND');
+				return true;
+			}
+
+			url = currPlaylists.data.next;
+		} catch (err) {
+			console.error('Error getting playlists: ', err.response?.data || err);
+			throw new Error('FailedToGetPlaylists');
 		}
 	}
+
+	return false;
 };
 
 const createPlaylist = async (spotifyId, mood, token) => {
@@ -119,6 +158,7 @@ const createPlaylist = async (spotifyId, mood, token) => {
 			body,
 			params
 		);
+		console.log('Created playlist');
 
 		return res.data;
 	} catch (error) {
@@ -132,6 +172,8 @@ const createPlaylist = async (spotifyId, mood, token) => {
 
 const addTracksToPlaylist = async (playlistId, trackIds, token) => {
 	try {
+		//make sure playlist isnt deleted. if it is, create one first.
+
 		console.log('add: ', trackIds);
 		const trackUris = trackIds.map((trackId) => `spotify:track:${trackId}`);
 		const params = {
@@ -191,6 +233,7 @@ module.exports = {
 	getRecommendations,
 	arraysNotEqual,
 	getPlaylist,
+	checkPlaylist,
 	createPlaylist,
 	addTracksToPlaylist,
 	removeTracksFromPlaylist,

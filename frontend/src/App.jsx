@@ -39,6 +39,9 @@ const App = () => {
 		}
 	}, []);
 
+	if (isCountdownVisible) {
+		console.log('DISPLAYING COUNTDOWN');
+	}
 	return (
 		<Background>
 			{user && <Navigation />}

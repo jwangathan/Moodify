@@ -49,6 +49,8 @@ const EntryView = ({ entry }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [selectedTrackIds, setSelectedTrackIds] = useState([]);
+	const [originalTrackIds, setOriginalTrackIds] = useState([]);
+	const [isUpdated, setIsUpdated] = useState(false);
 
 	useEffect(() => {
 		const fetchPlaylistState = async () => {
@@ -56,15 +58,23 @@ const EntryView = ({ entry }) => {
 				const { playlist } = await dispatch(fetchEntryById(entry.id)); //infinite loop because this updates entry
 				if (playlist.selectedTracks) {
 					setSelectedTrackIds(playlist.selectedTracks);
+					setOriginalTrackIds(playlist.selectedTracks);
 				}
 			}
 		};
-		console.log('HELLO');
 		const storedTracks = entry?.playlist?.selectedTracks || [];
 		setSelectedTrackIds(storedTracks);
+		setOriginalTrackIds(storedTracks);
 
 		fetchPlaylistState();
 	}, [entry]);
+
+	useEffect(() => {
+		const idsMatch =
+			selectedTrackIds.length === originalTrackIds.length &&
+			selectedTrackIds.every((id) => originalTrackIds.includes(id));
+		setIsUpdated(!idsMatch);
+	}, [selectedTrackIds, originalTrackIds]);
 
 	const handleSelect = (trackId) => {
 		setSelectedTrackIds((prevIds) =>
@@ -76,6 +86,8 @@ const EntryView = ({ entry }) => {
 
 	const updateEntryPlaylist = async () => {
 		dispatch(updatePlaylist(entry.id, selectedTrackIds));
+		setOriginalTrackIds(selectedTrackIds);
+		setIsUpdated(false);
 	};
 
 	const handleDelete = (entry) => {
@@ -100,6 +112,20 @@ const EntryView = ({ entry }) => {
 					>
 						Remove Entry
 					</button>
+					<button
+						onClick={() => {
+							setSelectedTrackIds(entry.tracks.map((track) => track.id));
+						}}
+					>
+						Select All
+					</button>
+					<button
+						onClick={() => {
+							setSelectedTrackIds([]);
+						}}
+					>
+						Deselect All
+					</button>
 					<GridContainer>
 						{entry.tracks.map((track) => (
 							<Track
@@ -112,11 +138,19 @@ const EntryView = ({ entry }) => {
 					</GridContainer>
 					<PlaylistButton
 						onClick={updateEntryPlaylist}
-						disabled={selectedTrackIds.length === 0}
+						disabled={
+							(selectedTrackIds.length === 0 && !isUpdated) || !isUpdated
+						}
 					>
-						{selectedTrackIds.length > 0
-							? 'Create/Update Playlist'
-							: 'Select Songs to Create Playlist'}
+						{
+							selectedTrackIds.length === 0
+								? isUpdated
+									? 'Update Playlist' // if updated and has no songs selected (deleted all songs)
+									: 'Select Songs to Create Playlist' // if not updated and no songs (no playlist)
+								: isUpdated
+								? 'Update Playlist' // if updated and has songs selected (changes made)
+								: 'Playlist has no changes' // if not updated and has songs selected (no changes made)
+						}
 					</PlaylistButton>
 				</div>
 			)}
