@@ -37,7 +37,13 @@ const generateRandomString = (length) => {
 loginRouter.get('/login', async (req, res) => {
 	const { code_verifier, code_challenge_base64 } = await generateCode();
 	const state = generateRandomString(16);
-	req.session.codeVerifier = code_verifier;
+
+	res.cookie('codeVerifier', code_verifier, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		maxAge: 600000,
+	});
+
 	const authUrl = new URL('https://accounts.spotify.com/authorize');
 	const params = {
 		response_type: 'code',
@@ -55,7 +61,7 @@ loginRouter.get('/login', async (req, res) => {
 
 loginRouter.get('/callback', async (req, res) => {
 	const code = req.query.code;
-	const code_verifier = req.session.codeVerifier;
+	const code_verifier = req.cookies.codeVerifier;
 
 	if (!code_verifier) {
 		return res.status(400).send('Code verifier not found in session');

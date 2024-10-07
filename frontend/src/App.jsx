@@ -1,18 +1,21 @@
 import { Routes, Route, useMatch } from 'react-router-dom';
-import HomePage from './components/HomePage';
-import LoginCallbackPage from './components/LoginCallbackPage';
-import Navigation from './components/Navigation';
-import UserPage from './components/UserPage';
-import QuestionPage from './components/QuestionPage';
-import EntryList from './components/EntryList';
-import EntryView from './components/EntryView';
-import EntryCallbackPage from './components/EntryCallbackPage';
-import Notification from './components/Notification';
-import CountdownModal from './components/CountdownModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { restoreUser, logout } from './reducers/authReducer';
-import { Background } from './components/DivStyles';
+
+import Navigation from './components/Navigation';
+import Notification from './components/Notification';
+import CountdownModal from './components/CountdownModal';
+import HomePage from './components/HomePage';
+import LoginCallbackPage from './components/LoginCallbackPage';
+import UserPage from './components/UserPage';
+import QuestionPage from './components/QuestionPage';
+import EntryCallbackPage from './components/EntryCallbackPage';
+import EntryList from './components/EntryList';
+import EntryView from './components/EntryView';
+import Footer from './components/Footer';
+
+import { Background, ContentWrapper } from './AppStyles';
 
 const App = () => {
 	const dispatch = useDispatch();
@@ -47,25 +50,28 @@ const App = () => {
 			{user && <Navigation />}
 			<Notification />
 			{isCountdownVisible && <CountdownModal />}
-			<Routes>
-				<Route path="/auth/callback" element={<LoginCallbackPage />} />
-				{user ? (
-					<>
-						<Route path="/" element={<UserPage />} />
-						<Route path="/survey" element={<QuestionPage />} />
-						<Route path="/entries" element={<EntryList />} />
-						<Route
-							path="/entries/:id"
-							element={<EntryView entry={selectedEntry} />}
-						/>
-						<Route path="/entries/callback" element={<EntryCallbackPage />} />
-					</>
-				) : (
-					<>
-						<Route path="/" element={<HomePage />} />
-					</>
-				)}
-			</Routes>
+			<ContentWrapper>
+				<Routes>
+					<Route path="/auth/callback" element={<LoginCallbackPage />} />
+					{user ? (
+						<>
+							<Route path="/" element={<UserPage />} />
+							<Route path="/survey" element={<QuestionPage />} />
+							<Route path="/entries" element={<EntryList />} />
+							<Route
+								path="/entries/:id"
+								element={<EntryView entry={selectedEntry} />}
+							/>
+							<Route path="/entries/callback" element={<EntryCallbackPage />} />
+						</>
+					) : (
+						<>
+							<Route path="/" element={<HomePage />} />
+						</>
+					)}
+				</Routes>
+			</ContentWrapper>
+			<Footer />
 		</Background>
 	);
 };

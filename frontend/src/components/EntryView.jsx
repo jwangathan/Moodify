@@ -1,3 +1,12 @@
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import {
+	updatePlaylist,
+	deleteEntry,
+	fetchEntryById,
+} from '../reducers/entryReducer';
+
 import {
 	BackButton,
 	GridContainer,
@@ -9,15 +18,7 @@ import {
 	AlbumName,
 	SelectButton,
 	PlaylistButton,
-} from './EntryStyles';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import {
-	updatePlaylist,
-	deleteEntry,
-	fetchEntryById,
-} from '../reducers/entryReducer';
+} from './EntryViewStyles';
 
 const Track = ({ track, onSelect, isSelected }) => {
 	return (

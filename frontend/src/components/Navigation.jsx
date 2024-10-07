@@ -1,7 +1,18 @@
-import { Nav, Navbar, Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../reducers/authReducer';
+
+import {
+	Navbar,
+	Brand,
+	Toggle,
+	NavList,
+	NavItem,
+	StyledLink,
+	UserActions,
+	UserInfo,
+	LogoutButton,
+} from './NavigationStyles';
 
 const Navigation = () => {
 	const currUser = useSelector((state) => state.auth);
@@ -16,34 +27,25 @@ const Navigation = () => {
 	};
 
 	return (
-		<Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-			<Navbar.Brand>Moodplay</Navbar.Brand>
-			<Navbar.Toggle aria-controls="responsive-navbar-nav" />
-			<Navbar.Collapse id="responsive-navbar-nav">
-				<Nav.Link href="#" as="span">
-					<Link style={{ padding: 5 }} to="/">
-						User Info
-					</Link>
-				</Nav.Link>
-				<Nav.Link href="#" as="span">
-					<Link style={{ padding: 5 }} to="/survey">
-						Question
-					</Link>
-				</Nav.Link>
-				<Nav.Link href="#" as="span">
-					<Link style={{ padding: 5 }} to="/entries">
-						My Playlists
-					</Link>
-				</Nav.Link>
-				<Nav className="ms-auto">
-					<Navbar.Text style={{ padding: 5 }}>
-						{currUser.user.displayName} logged in{' '}
-					</Navbar.Text>
-					<Button variant="primary" onClick={handleLogout}>
-						Logout
-					</Button>
-				</Nav>
-			</Navbar.Collapse>
+		<Navbar>
+			<Brand>Moodplay</Brand>
+			<Toggle>
+				<NavList>
+					<NavItem>
+						<StyledLink to="/">User Info</StyledLink>
+					</NavItem>
+					<NavItem>
+						<StyledLink to="/survey">Question</StyledLink>
+					</NavItem>
+					<NavItem>
+						<StyledLink to="/entries">My Playlists</StyledLink>
+					</NavItem>
+				</NavList>
+			</Toggle>
+			<UserActions>
+				<UserInfo>{currUser.user.displayName} logged in </UserInfo>
+				<LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+			</UserActions>
 		</Navbar>
 	);
 };

@@ -2,9 +2,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../reducers/authReducer';
-import { Spinner } from 'react-bootstrap';
 import { initializeEntries } from '../reducers/entryReducer';
-import { CenteredComponent } from './DivStyles';
+
+import Spinner from './Spinner';
 
 const LoginCallbackPage = () => {
 	const location = useLocation();
@@ -38,12 +38,7 @@ const LoginCallbackPage = () => {
 		fetchData();
 	}, [location.search, navigate, dispatch]);
 
-	return (
-		<CenteredComponent>
-			<Spinner animation="border" />
-			<span className="sr-only"> Logging in... </span>
-		</CenteredComponent>
-	);
+	return <Spinner message={'Logging in...'} />;
 };
 
 export default LoginCallbackPage;

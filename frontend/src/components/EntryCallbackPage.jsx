@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spinner } from 'react-bootstrap';
 import { createEntry } from '../reducers/entryReducer';
+
+import Spinner from './Spinner';
 
 const EntryCallbackPage = () => {
 	const location = useLocation();
@@ -41,19 +42,7 @@ const EntryCallbackPage = () => {
 		fetchData();
 	}, [location.search, navigate, dispatch]);
 
-	return (
-		<div
-			style={{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				height: '100vh',
-			}}
-		>
-			<Spinner animation="border" />
-			<span className="sr-only"> Creating Playlist... </span>
-		</div>
-	);
+	return <Spinner message={'Creating Entry...'} />;
 };
 
 export default EntryCallbackPage;

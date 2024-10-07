@@ -4,7 +4,8 @@ import {
 	ListWrapper,
 	ListHeader,
 	OrderedList,
-} from './ListStyles';
+	Centered,
+} from './UserPageStyles';
 
 const UserPage = () => {
 	const currUser = useSelector((state) => state.auth);
@@ -13,11 +14,13 @@ const UserPage = () => {
 		<>
 			{currUser && (
 				<div>
-					<img
-						src={currUser.user.profileImage}
-						alt={`${currUser.user.displayName}'s profile`}
-					/>
-					<h1>{currUser.user.displayName}</h1>
+					<Centered>
+						<img
+							src={currUser.user.profileImage}
+							alt={`${currUser.user.displayName}'s profile`}
+						/>
+						<h1>{currUser.user.displayName}</h1>
+					</Centered>
 					<ListContainer>
 						<ListWrapper>
 							<ListHeader>Top Artists (Past 6 months)</ListHeader>

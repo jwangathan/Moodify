@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { UnorderedList, ListItem } from './ListStyles';
-import { EntryItem } from './EntryStyles';
+
+import { EntryItem, ListItem, UnorderedList } from './EntryListStyles';
 
 const Entry = ({ entry }) => {
 	const navigate = useNavigate();

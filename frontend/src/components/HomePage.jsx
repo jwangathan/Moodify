@@ -1,6 +1,11 @@
-import { CenteredComponent, Div3, Div4 } from './DivStyles';
-import { LoginButton } from './ButtonStyles';
 import loginService from '../services/auth';
+
+import {
+	TextContainer,
+	Title,
+	Description,
+	LoginButton,
+} from './HomePageStyles';
 
 const HomePage = () => {
 	const handleLogin = async (event) => {
@@ -14,11 +19,11 @@ const HomePage = () => {
 	};
 
 	return (
-		<CenteredComponent>
-			<Div3>Moodify</Div3>
-			<Div4>Using music to meet your mood goals</Div4>
+		<TextContainer>
+			<Title>Moodify</Title>
+			<Description>Using music to meet your mood goals</Description>
 			<LoginButton onClick={handleLogin}>Login To Spotify</LoginButton>
-		</CenteredComponent>
+		</TextContainer>
 	);
 };
 

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { ModalBackground, ModalContainer, Countdown } from './ModalStyles';
 import { useDispatch } from 'react-redux';
 import { logout, refreshToken } from '../reducers/authReducer';
 import { setCountdownDisplay } from '../reducers/countdownReducer';
+
+import { ModalBackground, ModalContainer, Countdown } from './CountdownStyles';
 
 const CountdownModal = () => {
 	const dispatch = useDispatch();
