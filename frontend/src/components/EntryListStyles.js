@@ -1,35 +1,53 @@
 import styled from 'styled-components';
 
 export const EntryItem = styled.div`
-	display: inline-block;
-	cursor: pointer;
+	display: flex;
 	padding: 20px;
-	background-color: #f8f8f8;
+	flex-direction: column;
+	gap: 1rem;
+	background-color: #fff;
 	border-radius: 8px;
-	transition: background-color 0.3s, color 0.3s;
+	transition: background-color 0.3s ease;
 
-	p,
+	p {
+		margin: 0;
+		font-weight: bold;
+	}
+
 	em {
-		margin: 5px 0;
-		font-size: 16px;
-		color: #333;
+		color: #555;
+		font-style: normal;
+		font-weight: 400;
 	}
 
 	&:hover {
-		background-color: #e0e0e0;
-		color: #0073e6;
-	}
-
-	&:active {
-		background-color: #ccc;
-		color: #004a99;
+		background-color: #f0f4ff;
 	}
 `;
 
 export const ListItem = styled.div`
-	margin-bottom: 20px;
+	background-color: #f9f9f9;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	cursor: pointer;
+
+	&:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+	}
+
+	&:active {
+		transform: scale(0.98);
+	}
 `;
 
 export const UnorderedList = styled.ul`
 	list-style-type: none;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	max-width: 800px;
+	margin: 0 auto;
 `;

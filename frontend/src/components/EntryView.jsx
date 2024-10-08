@@ -9,8 +9,13 @@ import {
 
 import {
 	BackButton,
+	RemoveButton,
+	SelectAllButton,
+	DeselectAllButton,
+	ButtonContainer,
 	GridContainer,
-	TrackContainer,
+	TrackCard,
+	TrackHeader,
 	AlbumImage,
 	TrackDetails,
 	TrackName,
@@ -18,31 +23,37 @@ import {
 	AlbumName,
 	SelectButton,
 	PlaylistButton,
+	AudioPlayer,
+	Title,
 } from './EntryViewStyles';
 
-const Track = ({ track, onSelect, isSelected }) => {
+const Track = ({ track, onSelect, isSelected, isExpanded, toggleDetails }) => {
 	return (
-		<TrackContainer>
-			<AlbumImage src={track.album.image} alt={`${track.album.name}`} />
-			<TrackDetails>
+		<TrackCard>
+			<TrackHeader onClick={toggleDetails}>
+				<AlbumImage src={track.album.image} alt={`${track.album.name}`} />
 				<TrackName>{track.name}</TrackName>
-				<ArtistName>
-					{track.artists.map((artist) => artist.name).join(', ')}
-				</ArtistName>
-				<AlbumName>{track.album.name}</AlbumName>
-				{track.previewUrl ? (
-					<audio controls>
-						<source src={track.previewUrl} type="audio/mpeg" />
-						Your browser does not support the audio element
-					</audio>
-				) : (
-					<p>Song preview unavailable</p>
-				)}
 				<SelectButton onClick={() => onSelect(track.id)} selected={isSelected}>
 					{isSelected ? 'Selected' : 'Add to Playlist'}
 				</SelectButton>
-			</TrackDetails>
-		</TrackContainer>
+			</TrackHeader>
+			{isExpanded && (
+				<TrackDetails>
+					<ArtistName>
+						{track.artists.map((artist) => artist.name).join(', ')}
+					</ArtistName>
+					<AlbumName>{track.album.name}</AlbumName>
+					{track.previewUrl ? (
+						<AudioPlayer controls>
+							<source src={track.previewUrl} type="audio/mpeg" />
+							Your browser does not support the audio element
+						</AudioPlayer>
+					) : (
+						<p>Song preview unavailable</p>
+					)}
+				</TrackDetails>
+			)}
+		</TrackCard>
 	);
 };
 
@@ -52,6 +63,7 @@ const EntryView = ({ entry }) => {
 	const [selectedTrackIds, setSelectedTrackIds] = useState([]);
 	const [originalTrackIds, setOriginalTrackIds] = useState([]);
 	const [isUpdated, setIsUpdated] = useState(false);
+	const [expandedTrackId, setExpandedTrackId] = useState(null);
 
 	useEffect(() => {
 		const fetchPlaylistState = async () => {
@@ -85,6 +97,10 @@ const EntryView = ({ entry }) => {
 		);
 	};
 
+	const toggleDetails = (trackId) => {
+		setExpandedTrackId((prevId) => (prevId === trackId ? null : trackId));
+	};
+
 	const updateEntryPlaylist = async () => {
 		dispatch(updatePlaylist(entry.id, selectedTrackIds));
 		setOriginalTrackIds(selectedTrackIds);
@@ -102,31 +118,36 @@ const EntryView = ({ entry }) => {
 		<div>
 			{entry && (
 				<div>
-					<h1>Your Playlist</h1>
+					<Title>Your Selected Tracks</Title>
 					<BackButton onClick={() => navigate('/entries')}>
 						Return to Entries
 					</BackButton>
-					<button
-						onClick={() => {
-							handleDelete(entry);
-						}}
-					>
-						Remove Entry
-					</button>
-					<button
-						onClick={() => {
-							setSelectedTrackIds(entry.tracks.map((track) => track.id));
-						}}
-					>
-						Select All
-					</button>
-					<button
-						onClick={() => {
-							setSelectedTrackIds([]);
-						}}
-					>
-						Deselect All
-					</button>
+					<ButtonContainer>
+						<RemoveButton
+							onClick={() => {
+								handleDelete(entry);
+							}}
+						>
+							Remove Entry
+						</RemoveButton>
+
+						<div>
+							<SelectAllButton
+								onClick={() => {
+									setSelectedTrackIds(entry.tracks.map((track) => track.id));
+								}}
+							>
+								Select All
+							</SelectAllButton>
+							<DeselectAllButton
+								onClick={() => {
+									setSelectedTrackIds([]);
+								}}
+							>
+								Deselect All
+							</DeselectAllButton>
+						</div>
+					</ButtonContainer>
 					<GridContainer>
 						{entry.tracks.map((track) => (
 							<Track
@@ -134,6 +155,8 @@ const EntryView = ({ entry }) => {
 								track={track}
 								onSelect={handleSelect}
 								isSelected={selectedTrackIds.includes(track.id)}
+								isExpanded={expandedTrackId === track.id}
+								toggleDetails={() => toggleDetails(track.id)}
 							/>
 						))}
 					</GridContainer>

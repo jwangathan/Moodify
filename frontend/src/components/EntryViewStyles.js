@@ -1,112 +1,172 @@
 import styled from 'styled-components';
 
-export const BackButton = styled.div`
-	position: absolute;
-	top: 70px;
-	left: 10px;
-	padding: 10px 20px;
-	background-color: #0073e6;
+export const BackButton = styled.button`
+	background-color: #5c85ff;
 	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
 	border-radius: 5px;
 	cursor: pointer;
-	transition: background-color 0.3s;
+	margin-bottom: 20px;
 
 	&:hover {
-		background-color: #005bb5;
+		background-color: #4a6fd1;
 	}
+`;
 
-	&:active {
-		background-color: #004a99;
+export const RemoveButton = styled.button`
+	background-color: #ff4d4d;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+	margin: 10px 0;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: #ff1a1a;
+	}
+`;
+
+export const ButtonContainer = styled.div`
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px;
+	align-items: center;
+`;
+
+export const SelectAllButton = styled.button`
+	background-color: #4caf50;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+	margin: 10px 10px 10px 0;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: #45a049;
+	}
+`;
+
+export const DeselectAllButton = styled.button`
+	background-color: #ff9800;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+	margin: 10px 10px 10px 0;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: #fb8c00;
 	}
 `;
 
 export const GridContainer = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: repeat(2, 1fr);
 	gap: 20px;
+	margin-top: 20px;
 `;
 
-export const TrackContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	text-align: center;
-	padding: 20px;
-	box-sizing: border-box;
+export const TrackCard = styled.div`
+	backgroun: #fff;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	margin: 10px 0;
+	padding: 10px;
+	transition: background 0.3s;
+	cursor: pointer;
+
+	&:hover {
+		background-color: #f0f0f0;
+	}
 `;
 
 export const AlbumImage = styled.img`
-	width: 100%;
-	max-width: 200px;
-	height: auto;
-	margin-bottom: 10px;
-	object-fit: contain;
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
 	border-radius: 8px;
+`;
+
+export const TrackHeader = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
 `;
 
 export const TrackDetails = styled.div`
 	display: flex;
 	flex-direction: column;
+	margin-top: 10px;
 `;
 
 export const TrackName = styled.h3`
+	font-size: 1.2rem;
 	margin: 0;
-	font-size: 18px;
-	font-weight: bold;
-	margin-bottom: 8px;
+	margin-left: 10px;
 `;
 
 export const ArtistName = styled.h3`
-	margin: 0;
-	font-size: 16px;
-	font-weight: normal;
+	margin: 5px 0;
+	color: #555;
 `;
 
 export const AlbumName = styled.p`
-	margin: 0;
-	font-size: 16px;
-	font-weight: lighter;
-	margin-top: 4px;
+	margin: 5px 0;
+	color: #888;
 `;
 
 export const SelectButton = styled.button`
-	background-color: #007bff; /* Blue background */
-	color: white; /* White text */
-	border: none; /* Remove border */
-	border-radius: 5px; /* Rounded corners */
-	padding: 10px 15px; /* Padding inside the button */
-	cursor: pointer; /* Pointer cursor on hover */
-	font-size: 14px; /* Font size */
-	margin-top: 10px; /* Margin at the top */
-	transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-
+	background-color: ${({ selected }) => (selected ? '#4caf50' : '#5c85ff')};
+	color: white;
+	border: none;
+	padding: 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-top: 10px;
 	&:hover {
-		background-color: #0056b3; /* Darker blue on hover */
-	}
-
-	&:disabled {
-		background-color: #d6d6d6; /* Gray background for disabled state */
-		cursor: not-allowed; /* Not-allowed cursor */
+		background-color: ${({ selected }) => (selected ? '#45a049' : '#4a6fd1')};
 	}
 `;
 
 export const PlaylistButton = styled.button`
-	background-color: #28a745; /* Green background */
-	color: white; /* White text */
-	border: none; /* Remove border */
-	border-radius: 5px; /* Rounded corners */
-	padding: 10px 15px; /* Padding inside the button */
-	cursor: pointer; /* Pointer cursor on hover */
-	font-size: 16px; /* Font size */
-	margin-top: 20px; /* Margin at the top */
-	transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+	background-color: ${({ disabled }) => (disabled ? '#ddd' : '#5c85ff')};
+	color: ${({ disabled }) => (disabled ? '#aaa' : 'white')};
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
+	border-radius: 5px;
+	cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+	margin: 20px auto;
+	display: block;
+	text-align: center;
 
 	&:hover {
-		background-color: #218838; /* Darker green on hover */
+		background-color: ${({ disabled }) => (disabled ? '#ddd' : '#4a6fd1')};
 	}
+`;
 
-	&:disabled {
-		background-color: #d6d6d6; /* Gray background for disabled state */
-		cursor: not-allowed; /* Not-allowed cursor */
-	}
+export const AudioPlayer = styled.audio`
+	width: 100%;
+	margin: 10px 0;
+`;
+
+export const Title = styled.h1`
+	font-size: 2rem;
+	color: #333;
+	text-align: center;
+	margin-bottom: 20px;
+	font-weight: bold;
+	text-transform: uppercase;
 `;

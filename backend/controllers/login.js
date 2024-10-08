@@ -97,7 +97,15 @@ loginRouter.get('/callback', async (req, res) => {
 		});
 
 		const { id: spotifyId, display_name, images } = userRes.data;
-		const profileImage = images.length > 0 ? images[0].url : '';
+
+		let profileImage;
+		if (images && images.length > 0) {
+			profileImage = images.sort(
+				(a, b) => b.width * b.height - a.width * a.height
+			)[0].url;
+		} else {
+			profileImage = '';
+		}
 
 		const topArtistsRes = await axios.get(`${baseURL}/me/top/artists`, {
 			headers: { Authorization: `Bearer ${access_token}` },

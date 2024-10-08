@@ -12,6 +12,9 @@ const Entry = ({ entry }) => {
 				<em>{entry.situation}</em>
 				<p>What would you like to feel from this?</p>
 				<em>{entry.emotion}</em>
+				<small>
+					Created On: {new Date(entry.createdAt).toLocaleDateString()}
+				</small>
 			</EntryItem>
 		</ListItem>
 	);

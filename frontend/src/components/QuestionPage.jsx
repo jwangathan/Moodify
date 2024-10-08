@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionContainer } from './QuestionPageStyles';
 
@@ -6,6 +6,7 @@ const QuestionPage = () => {
 	const [step, setStep] = useState(1);
 	const [situation, setSituation] = useState('');
 	const [emotion, setEmotion] = useState('');
+	const [fade, setFade] = useState('fade-enter');
 	const navigate = useNavigate();
 
 	const handleInputChange = (e) => {
@@ -17,20 +18,29 @@ const QuestionPage = () => {
 	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (step === 1) {
-			e.target.value = '';
-			setStep(2);
-		} else if (step === 2) {
-			setStep(1);
-			navigate('/entries/callback', {
-				state: { situation, emotion },
-			});
-			setSituation('');
-			setEmotion('');
-		}
+		setFade('fade-exit');
+		setTimeout(() => {
+			if (step === 1) {
+				e.target.value = '';
+				setStep(2);
+			} else if (step === 2) {
+				setStep(1);
+				navigate('/entries/callback', {
+					state: { situation, emotion },
+				});
+				setSituation('');
+				setEmotion('');
+			}
+			setFade('fade-enter');
+		}, 500);
 	};
+
+	useEffect(() => {
+		setFade('fade-enter');
+	}, [step]);
+
 	return (
-		<QuestionContainer>
+		<QuestionContainer className={fade}>
 			{step === 1 ? (
 				<>
 					<h1>Tell me about something in your life</h1>
