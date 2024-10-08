@@ -29,8 +29,8 @@ import {
 
 const Track = ({ track, onSelect, isSelected, isExpanded, toggleDetails }) => {
 	return (
-		<TrackCard>
-			<TrackHeader onClick={toggleDetails}>
+		<TrackCard onClick={toggleDetails}>
+			<TrackHeader>
 				<AlbumImage src={track.album.image} alt={`${track.album.name}`} />
 				<TrackName>{track.name}</TrackName>
 				<SelectButton onClick={() => onSelect(track.id)} selected={isSelected}>

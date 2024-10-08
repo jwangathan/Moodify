@@ -6,9 +6,7 @@ export const ListContainer = styled.div`
 	justify-content: space-around;
 	padding: 20px;
 	margin: 20px;
-	background: #f7f7f7;
 	border-radius: 10px;
-	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
 export const ListWrapper = styled.div`
