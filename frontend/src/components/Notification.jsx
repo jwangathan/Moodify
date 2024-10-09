@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { Alert } from 'react-bootstrap';
+import { Alert } from './NotificationStyles';
 
 const Notification = () => {
 	const notification = useSelector((state) => state.notification);

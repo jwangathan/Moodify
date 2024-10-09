@@ -4,6 +4,7 @@ import userService from '../services/users';
 import authService from '../services/auth';
 import setRefreshTimeout from '../hooks/setRefreshTimeout';
 import { initializeEntries } from './entryReducer';
+import { displayNotification } from './notificationReducer';
 
 /*
 const initialState = {
@@ -58,8 +59,11 @@ export const loginUser = (code) => {
 				dispatch,
 				expiresIn: auth.expiresAt - Math.floor(Date.now() / 1000),
 			});
+			dispatch(
+				displayNotification(`logged in ${auth.user.displayName}`, 'success', 3)
+			);
 		} catch (error) {
-			console.error('Failed to login User: ', error);
+			dispatch(displayNotification('error logging in', 'error', 3));
 			dispatch(logout());
 		}
 	};
