@@ -6,7 +6,7 @@ import {
 	deleteEntry,
 	fetchEntryById,
 } from '../reducers/entryReducer';
-
+import { CgAdd, CgCheckO } from 'react-icons/cg';
 import {
 	BackButton,
 	RemoveButton,
@@ -33,8 +33,14 @@ const Track = ({ track, onSelect, isSelected, isExpanded, toggleDetails }) => {
 			<TrackHeader>
 				<AlbumImage src={track.album.image} alt={`${track.album.name}`} />
 				<TrackName>{track.name}</TrackName>
-				<SelectButton onClick={() => onSelect(track.id)} selected={isSelected}>
-					{isSelected ? 'Selected' : 'Add to Playlist'}
+				<SelectButton
+					onClick={(e) => {
+						e.stopPropagation();
+						onSelect(track.id);
+					}}
+					selected={isSelected}
+				>
+					{isSelected ? <CgCheckO /> : <CgAdd />}
 				</SelectButton>
 			</TrackHeader>
 			{isExpanded && (

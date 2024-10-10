@@ -128,15 +128,23 @@ export const AlbumName = styled.p`
 `;
 
 export const SelectButton = styled.button`
-	background-color: ${({ selected }) => (selected ? '#4caf50' : '#5c85ff')};
-	color: white;
+	display: inline-block;
+	background-color: ${({ selected }) => (selected ? '#4caf50' : 'transparent')};
+	padding: 0px;
+	border-radius: 99%;
 	border: none;
-	padding: 10px;
-	border-radius: 5px;
 	cursor: pointer;
-	margin-top: 10px;
+	transition: background-color 0.3s ease;
+
 	&:hover {
-		background-color: ${({ selected }) => (selected ? '#45a049' : '#4a6fd1')};
+		background-color: ${({ selected }) => (selected ? '#45a049' : '#e0e0e0')};
+	}
+
+	svg {
+		display: block;
+		height: 1.5rem;
+		width: 1.5rem;
+		color: black;
 	}
 `;
 
