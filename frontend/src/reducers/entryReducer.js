@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import entryService from '../services/entries';
+import { displayNotification } from './notificationReducer';
 
 // user: {spotifyId}, situation, emotion, attributes,
 // tracks: {id, name, artists: {id, name}, album: {id, name, image}, previewUrl, externalUrl}}
@@ -52,9 +53,17 @@ export const createEntry = (
 				emotion,
 			});
 			dispatch(appendEntry(res));
+			dispatch(displayNotification('New entry created', 'success', 5));
 			return res;
 		} catch (err) {
 			console.log(err);
+			dispatch(
+				displayNotification(
+					'There was an error creating your entry. Please try again.',
+					'error',
+					5
+				)
+			);
 		}
 	};
 };
@@ -64,7 +73,9 @@ export const updatePlaylist = (id, selectedTracks) => {
 		try {
 			const newEntry = await entryService.updatePlaylist(id, selectedTracks);
 			dispatch(updateEntry(newEntry));
+			dispatch(displayNotification('Playlist updated', 'success', 3));
 		} catch (err) {
+			dispatch(displayNotification('Error updating playlist', 'error', 3));
 			console.error(err);
 		}
 	};
@@ -74,18 +85,33 @@ export const fetchEntryById = (id) => {
 	return async (dispatch) => {
 		try {
 			const entry = await entryService.getEntry(id);
-			if (entry.updated) dispatch(updateEntry(entry));
+			if (entry.updated) {
+				dispatch(updateEntry(entry));
+				dispatch(
+					displayNotification(
+						'Entry has been updated since last fetch.',
+						'success',
+						3
+					)
+				);
+			}
 			return entry.entry;
 		} catch (err) {
 			console.error(err);
+			dispatch(displayNotification('Error fetching entry', 'error', 3));
 		}
 	};
 };
 
 export const deleteEntry = (id) => {
 	return async (dispatch) => {
-		await entryService.deleteEntry(id);
-		dispatch(removeEntry(id));
+		try {
+			await entryService.deleteEntry(id);
+			dispatch(removeEntry(id));
+			dispatch(displayNotification('Entry deleted', 'success', 3));
+		} catch (err) {
+			dispatch(displayNotification('Error deleting entry', 'error', 3));
+		}
 	};
 };
 

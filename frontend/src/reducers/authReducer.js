@@ -60,10 +60,16 @@ export const loginUser = (code) => {
 				expiresIn: auth.expiresAt - Math.floor(Date.now() / 1000),
 			});
 			dispatch(
-				displayNotification(`logged in ${auth.user.displayName}`, 'success', 3)
+				displayNotification(
+					`${auth.user.displayName} has been logged in.`,
+					'success',
+					3
+				)
 			);
 		} catch (error) {
-			dispatch(displayNotification('error logging in', 'error', 3));
+			dispatch(
+				displayNotification('There was an error logging in.', 'error', 3)
+			);
 			dispatch(logout());
 		}
 	};
@@ -79,8 +85,18 @@ export const refreshToken = () => {
 				dispatch,
 				expiresIn: res.expiresAt - Math.floor(Date.now() / 1000),
 			});
+			dispatch(
+				displayNotification('Your session has been refreshed.', 'success', 3)
+			);
 		} catch (error) {
 			console.error('Failed to refresh token: ', error);
+			dispatch(
+				displayNotification(
+					'There has been an error refreshing your session. Please log in again.',
+					'error',
+					3
+				)
+			);
 			dispatch(logout());
 		}
 	};
@@ -92,8 +108,18 @@ export const restoreUser = (spotifyId) => {
 			const res = await userService.getUserById(spotifyId);
 			dispatch(setUser(res));
 			dispatch(initializeEntries());
+			dispatch(
+				displayNotification('Your session has been restored.', 'success', 3)
+			);
 		} catch (error) {
 			console.error('Failed to restore user: ', error);
+			dispatch(
+				displayNotification(
+					'There has been an error restoring your session. Please log in again.',
+					'error',
+					3
+				)
+			);
 			dispatch(logout());
 		}
 	};

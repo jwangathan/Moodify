@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { Alert } from './NotificationStyles';
+import { CgCloseO, CgDanger, CgCheckO } from 'react-icons/cg';
 
 const Notification = () => {
 	const notification = useSelector((state) => state.notification);
@@ -7,11 +7,26 @@ const Notification = () => {
 	const renderNotification = () => {
 		switch (notification.type) {
 			case 'success':
-				return <Success>{notification.message}</Success>;
+				return (
+					<Success>
+						<CgCheckO />
+						{notification.message}
+					</Success>
+				);
 			case 'error':
-				return <Error>{notification.message}</Error>;
+				return (
+					<Error>
+						<CgDanger />
+						{notification.message}
+					</Error>
+				);
 			case 'warning':
-				return <Warning>{notification.message}</Warning>;
+				return (
+					<Warning>
+						<CgCloseO />
+						{notification.message}
+					</Warning>
+				);
 			default:
 				return null;
 		}
