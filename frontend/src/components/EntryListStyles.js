@@ -44,7 +44,7 @@ export const ListItem = styled.div`
 
 export const UnorderedList = styled.ul`
 	list-style-type: none;
-	padding: 0;
+	padding: 1rem;
 	display: flex;
 	flex-direction: column;
 	gap: 1.5rem;

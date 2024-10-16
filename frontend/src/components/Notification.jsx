@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { CgCloseO, CgDanger, CgCheckO } from 'react-icons/cg';
+import { Error, Success, Warning } from './NotificationStyles';
 
 const Notification = () => {
 	const notification = useSelector((state) => state.notification);

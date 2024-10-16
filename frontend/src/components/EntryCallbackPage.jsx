@@ -9,19 +9,19 @@ const EntryCallbackPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const currUser = useSelector((state) => state.auth);
+	const user = useSelector((state) => state.auth);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				if (location.state?.situation && location.state?.emotion) {
 					const { situation, emotion } = location.state;
-					const seed_artists = currUser.topArtists
+					const seed_artists = user.topArtists
 						.slice(0, 2)
 						.map((artist) => artist.id)
 						.join();
-					const seed_tracks = currUser.topTracks[0].id;
-					const seed_genres = currUser.topGenres.slice(0, 2).join();
+					const seed_tracks = user.topTracks[0].id;
+					const seed_genres = user.topGenres.slice(0, 2).join();
 					const newEntry = await dispatch(
 						createEntry(
 							seed_artists,

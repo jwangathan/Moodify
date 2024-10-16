@@ -7,19 +7,23 @@ import { initializeEntries } from './entryReducer';
 import { displayNotification } from './notificationReducer';
 
 /*
-const initialState = {
-	token: null,
-	expiresAt: null,
-	topArtists: null,
-	topGenres: null,
-	topTracks: null,
-	user: {
-		spotifyId: null,
-		displayName: null,
-		profileImage: null,
-	},
-}; 
+values
+token: null,
+expiresAt: null,
+topArtists: null,
+topGenres: null,
+topTracks: null,
+user: {
+	spotifyId: null,
+	displayName: null,
+	profileImage: null,
+},
 */
+
+const initialState = {
+	loading: false,
+	user: null,
+};
 
 const authSlice = createSlice({
 	name: 'auth',
@@ -28,11 +32,10 @@ const authSlice = createSlice({
 		setUser(state, action) {
 			const newState = { ...state, ...action.payload };
 			const currUser = JSON.stringify({
-				spotifyId: newState.user.spotifyId,
-				token: newState.token,
-				expiresAt: newState.expiresAt,
+				...newState,
 				expiresIn: newState.expiresAt - Math.floor(Date.now() / 1000),
 			});
+
 			window.localStorage.setItem('user', currUser);
 			if (newState.token) {
 				entryService.setToken(newState.token);
@@ -54,11 +57,13 @@ export const loginUser = (code) => {
 		try {
 			const res = await authService.getUser({ code });
 			await dispatch(setUser(res));
+
 			const { auth } = getState();
 			setRefreshTimeout({
 				dispatch,
 				expiresIn: auth.expiresAt - Math.floor(Date.now() / 1000),
 			});
+
 			dispatch(
 				displayNotification(
 					`${auth.user.displayName} has been logged in.`,
@@ -85,6 +90,7 @@ export const refreshToken = () => {
 				dispatch,
 				expiresIn: res.expiresAt - Math.floor(Date.now() / 1000),
 			});
+
 			dispatch(
 				displayNotification('Your session has been refreshed.', 'success', 3)
 			);
@@ -102,15 +108,21 @@ export const refreshToken = () => {
 	};
 };
 
-export const restoreUser = (spotifyId) => {
+export const restoreUser = (parsedUser) => {
 	return async (dispatch) => {
 		try {
-			const res = await userService.getUserById(spotifyId);
-			dispatch(setUser(res));
+			dispatch(setUser(parsedUser));
 			dispatch(initializeEntries());
 			dispatch(
 				displayNotification('Your session has been restored.', 'success', 3)
 			);
+			const timeRemaining =
+				parsedUser.expiresAt - Math.floor(Date.now() / 1000);
+			console.log('TIME REMAINING: ', timeRemaining);
+			setRefreshTimeout({
+				dispatch,
+				expiresIn: timeRemaining,
+			});
 		} catch (error) {
 			console.error('Failed to restore user: ', error);
 			dispatch(

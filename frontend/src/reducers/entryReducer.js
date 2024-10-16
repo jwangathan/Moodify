@@ -1,15 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
 import entryService from '../services/entries';
 import { displayNotification } from './notificationReducer';
+import entries from '../services/entries';
 
 // user: {spotifyId}, situation, emotion, attributes,
 // tracks: {id, name, artists: {id, name}, album: {id, name, image}, previewUrl, externalUrl}}
 // playlist: { id, name }
+const initialState = {
+	loading: null,
+	entries: [],
+};
 
 const entrySlice = createSlice({
 	name: 'entries',
 	initialState: [],
 	reducers: {
+		// setLoading(state, action) {
+		// 	state.loading = action.payload;
+		// },
 		updateEntry(state, action) {
 			const id = action.payload.id;
 			const newEntry = action.payload.entry;
@@ -23,16 +31,27 @@ const entrySlice = createSlice({
 		},
 		removeEntry(state, action) {
 			const id = action.payload;
-			const newEntryList = state.filter((e) => e.id !== id);
-			return newEntryList;
+			return state.filter((e) => e.id !== id);
 		},
 	},
 });
 
 export const initializeEntries = () => {
 	return async (dispatch) => {
-		const entries = await entryService.getAll();
-		dispatch(setEntries(entries));
+		try {
+			console.log('INITIALIZING ENTRIES');
+			const entries = await entryService.getAll();
+			dispatch(setEntries(entries));
+		} catch (err) {
+			console.log(err);
+			dispatch(
+				displayNotification(
+					'There was an error fetching your entries. Please try again.',
+					'error',
+					3
+				)
+			);
+		}
 	};
 };
 

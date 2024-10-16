@@ -27,7 +27,7 @@ const LoginCallbackPage = () => {
 				if (code) {
 					await dispatch(loginUser(code));
 					await dispatch(initializeEntries());
-					navigate('/');
+					navigate('/home');
 				}
 			} catch (error) {
 				console.error('An unexpected error occurred: ', error);

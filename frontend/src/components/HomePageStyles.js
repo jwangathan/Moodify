@@ -1,51 +1,73 @@
 import styled from 'styled-components';
 
-export const TextContainer = styled.div`
+export const ListContainer = styled.div`
 	display: flex;
-	flex-direction: column;
-	align-items: center;
-	text-align: center;
-	justify-content: center;
-	height: 100vh;
+	flex-wrap: wrap;
+	justify-content: space-around;
 	padding: 20px;
+	margin: 20px;
+	border-radius: 10px;
 `;
 
-export const Title = styled.div`
-	font-size: 3rem;
-	font-weight: 700;
-	color: #2d3436;
-	margin-bottom: 10px;
-	@media (max-width: 768px) {
-		font-size: 2.5rem;
-	}
-`;
-
-export const Description = styled.div`
-	font-size: 1.5rem;
-	color: #636e72;
-	margin-bottom: 30px;
-	@media (max-width: 768px) {
-		font-size: 1.2rem;
-	}
-`;
-
-export const LoginButton = styled.button`
-	border-radius: 50px;
-	background-color: #1db954;
-	border: none;
-	font-size: 1.2rem;
-	font-weight: 600;
-	color: #fff;
-	padding: 12px 30px;
-	cursor: pointer;
-	transition: background-color 0.3s ease, transform 0.2s ease;
+export const ListWrapper = styled.div`
+	background: white;
+	width: 300px;
+	margin: 20px;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+	transition: transform 0.2s ease-in-out;
 
 	&:hover {
-		background-color: #17a74a;
-		transform: translateY(-2px);
+		transform: translateY(-10px);
+	}
+`;
+
+export const ListHeader = styled.h2`
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 15px;
+`;
+
+export const OrderedList = styled.ol`
+	list-style-type: none;
+	padding-left: 0;
+	margin: 0;
+
+	li {
+		padding: 10px;
+		font-size: 1rem;
+		border-bottom: 1px solid #e0e0e0;
+		color: #555;
+
+		&:hover {
+			color: #333;
+			font-weight: 600;
+		}
+	}
+`;
+
+export const Centered = styled.div`
+	flex-direction: column;
+	display: flex;
+	align-items: center;
+	text-align: center;
+	padding: 20px;
+
+	img {
+		border-radius: 50%;
+		width: 150px;
+		height: 150px;
+		object-fit: cover;
+		margin-bottom: 20px;
+		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 	}
 
-	&:active {
-		transform: translateY(1px);
+	h1 {
+		font-size: 2rem;
+		font-weight: 700;
+		margin-bottom: 10px;
+		color: #333;
 	}
 `;

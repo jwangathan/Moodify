@@ -172,7 +172,7 @@ loginRouter.get('/callback', async (req, res) => {
 			},
 		});
 	} catch (error) {
-		console.log('Error during Spotify token exchange: ', error);
+		console.log('Error during Spotify token exchange: ', error.response.data);
 		res.status(500).send('Token exchange failed');
 	}
 });

@@ -14,6 +14,7 @@ export const Brand = styled.div`
 	font-size: 1.5rem;
 	font-weight: bold;
 	color: white;
+	cursor: pointer;
 `;
 
 export const Toggle = styled.div`

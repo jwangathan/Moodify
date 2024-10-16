@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import Spinner from './Spinner';
 
 import { EntryItem, ListItem, UnorderedList } from './EntryListStyles';
 
@@ -28,7 +29,7 @@ const EntryList = () => {
 	}
 
 	return (
-		<div>
+		<>
 			{entries && (
 				<div>
 					<UnorderedList>
@@ -38,7 +39,7 @@ const EntryList = () => {
 					</UnorderedList>
 				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

@@ -74,7 +74,7 @@ const EntryView = ({ entry }) => {
 	useEffect(() => {
 		const fetchPlaylistState = async () => {
 			if (entry && entry.playlist.id) {
-				const { playlist } = await dispatch(fetchEntryById(entry.id)); //infinite loop because this updates entry
+				const { playlist } = await dispatch(fetchEntryById(entry.id));
 				if (playlist.selectedTracks) {
 					setSelectedTrackIds(playlist.selectedTracks);
 					setOriginalTrackIds(playlist.selectedTracks);

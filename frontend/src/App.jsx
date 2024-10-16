@@ -1,27 +1,34 @@
 import { Routes, Route, useMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { restoreUser, logout } from './reducers/authReducer';
 
 import Navigation from './components/Navigation';
 import Notification from './components/Notification';
 import CountdownModal from './components/CountdownModal';
-import HomePage from './components/HomePage';
+import LoginPage from './components/LoginPage';
 import LoginCallbackPage from './components/LoginCallbackPage';
-import UserPage from './components/UserPage';
+import HomePage from './components/HomePage';
 import QuestionPage from './components/QuestionPage';
 import EntryCallbackPage from './components/EntryCallbackPage';
 import EntryList from './components/EntryList';
 import EntryView from './components/EntryView';
 import Footer from './components/Footer';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import { Background, ContentWrapper } from './AppStyles';
+import useSession from './hooks/useSession';
 
 const App = () => {
 	const dispatch = useDispatch();
-	const user = useSelector((state) => state.auth);
+	const user = useSession();
 	const entries = useSelector((state) => state.entries);
 	const { isCountdownVisible } = useSelector((state) => state.countdown);
+
+	useEffect(() => {
+		if (user && user.expiresAt - Math.floor(Date.now() / 1000) <= 300) {
+			dispatch(refreshToken());
+		}
+	}, [user, dispatch]);
 
 	const entryMatch = useMatch('/entries/:id');
 	const entryId = entryMatch ? entryMatch.params.id : null;
@@ -29,22 +36,6 @@ const App = () => {
 		? entries.find((entry) => entry.id === entryId)
 		: null;
 
-	useEffect(() => {
-		const storedUser = window.localStorage.getItem('user');
-		if (storedUser) {
-			const parsedUser = JSON.parse(storedUser);
-			if (parsedUser.expiresAt <= Math.floor(Date.now() / 1000)) {
-				//if the session is expired, log out
-				dispatch(logout());
-			} else {
-				dispatch(restoreUser(parsedUser.spotifyId));
-			}
-		}
-	}, []);
-
-	if (isCountdownVisible) {
-		console.log('DISPLAYING COUNTDOWN');
-	}
 	return (
 		<Background>
 			{user && <Navigation />}
@@ -52,23 +43,27 @@ const App = () => {
 			{isCountdownVisible && <CountdownModal />}
 			<ContentWrapper>
 				<Routes>
+					<Route path="/" element={<LoginPage />} />
 					<Route path="/auth/callback" element={<LoginCallbackPage />} />
-					{user ? (
-						<>
-							<Route path="/" element={<UserPage />} />
-							<Route path="/survey" element={<QuestionPage />} />
-							<Route path="/entries" element={<EntryList />} />
-							<Route
-								path="/entries/:id"
-								element={<EntryView entry={selectedEntry} />}
-							/>
-							<Route path="/entries/callback" element={<EntryCallbackPage />} />
-						</>
-					) : (
-						<>
-							<Route path="/" element={<HomePage />} />
-						</>
-					)}
+					<Route path="/home" element={<ProtectedRoute element={HomePage} />} />
+					<Route
+						path="/survey"
+						element={<ProtectedRoute element={QuestionPage} />}
+					/>
+					<Route
+						path="/entries"
+						element={<ProtectedRoute element={EntryList} />}
+					/>
+					<Route
+						path="/entries/:id"
+						element={
+							<ProtectedRoute element={EntryView} entry={selectedEntry} />
+						}
+					/>
+					<Route
+						path="/entries/callback"
+						element={<ProtectedRoute element={EntryCallbackPage} />}
+					/>
 				</Routes>
 			</ContentWrapper>
 			<Footer />

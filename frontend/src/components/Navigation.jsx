@@ -15,24 +15,23 @@ import {
 } from './NavigationStyles';
 
 const Navigation = () => {
-	const currUser = useSelector((state) => state.auth);
+	const user = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
 	const handleLogout = (event) => {
 		event.preventDefault();
-		console.log('logging out user', currUser.spotifyId);
+		console.log('logging out user', user.spotifyId);
 		navigate('/');
 		dispatch(logout());
 	};
 
 	return (
 		<Navbar>
-			<Brand>Moodplay</Brand>
+			<Brand onClick={() => navigate('/')}>Moodplay</Brand>
 			<Toggle>
 				<NavList>
 					<NavItem>
-						<StyledLink to="/">User Info</StyledLink>
+						<StyledLink to="/home">User Info</StyledLink>
 					</NavItem>
 					<NavItem>
 						<StyledLink to="/survey">Question</StyledLink>
@@ -43,7 +42,7 @@ const Navigation = () => {
 				</NavList>
 			</Toggle>
 			<UserActions>
-				<UserInfo>{currUser.user.displayName} logged in </UserInfo>
+				<UserInfo>{user.user.displayName} logged in </UserInfo>
 				<LogoutButton onClick={handleLogout}>Logout</LogoutButton>
 			</UserActions>
 		</Navbar>
