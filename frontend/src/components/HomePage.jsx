@@ -6,10 +6,9 @@ import {
 	OrderedList,
 	Centered,
 } from './HomePageStyles';
-import Spinner from './Spinner';
 
 const HomePage = () => {
-	const user = useSelector((state) => state.auth);
+	const { user } = useSelector((state) => state.auth);
 
 	return (
 		<>

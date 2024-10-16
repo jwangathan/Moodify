@@ -5,7 +5,7 @@ import { displayNotification } from '../reducers/notificationReducer';
 
 const useSession = () => {
 	const dispatch = useDispatch();
-	const user = useSelector((state) => state.auth);
+	const { user } = useSelector((state) => state.auth);
 
 	useEffect(() => {
 		const storedUser = window.localStorage.getItem('user');

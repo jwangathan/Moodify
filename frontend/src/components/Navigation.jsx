@@ -15,7 +15,7 @@ import {
 } from './NavigationStyles';
 
 const Navigation = () => {
-	const user = useSelector((state) => state.auth);
+	const { user } = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const handleLogout = (event) => {

@@ -6,10 +6,9 @@ import {
 	Description,
 	LoginButton,
 } from './LoginPageStyles';
-import Spinner from './Spinner';
 
 const LoginPage = () => {
-	const user = useSelector((state) => state.auth);
+	const { user } = useSelector((state) => state.auth);
 	const handleLogin = async (event) => {
 		event.preventDefault();
 		try {

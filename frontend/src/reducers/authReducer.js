@@ -21,33 +21,37 @@ user: {
 */
 
 const initialState = {
-	loading: false,
+	loading: true,
 	user: null,
 };
 
 const authSlice = createSlice({
 	name: 'auth',
-	initialState: null,
+	initialState,
 	reducers: {
+		setLoading(state, action) {
+			state.loading = action.payload;
+		},
 		setUser(state, action) {
-			const newState = { ...state, ...action.payload };
-			const currUser = JSON.stringify({
-				...newState,
-				expiresIn: newState.expiresAt - Math.floor(Date.now() / 1000),
-			});
+			const newState = { ...state.user, ...action.payload };
+			const expiresIn = newState.expiresAt - Math.floor(Date.now() / 1000);
+			state.user = { ...newState, expiresIn };
+
+			const currUser = JSON.stringify(state.user);
 
 			window.localStorage.setItem('user', currUser);
 			if (newState.token) {
 				entryService.setToken(newState.token);
 				userService.setToken(newState.token);
 			}
-			return newState;
+			state.loading = false;
 		},
 		logout(state, action) {
 			window.localStorage.clear();
 			entryService.resetToken();
 			userService.resetToken();
-			return null;
+			state.loading = false;
+			return initialState;
 		},
 	},
 });
@@ -55,6 +59,7 @@ const authSlice = createSlice({
 export const loginUser = (code) => {
 	return async (dispatch, getState) => {
 		try {
+			dispatch(setLoading(true));
 			const res = await authService.getUser({ code });
 			await dispatch(setUser(res));
 
@@ -76,6 +81,8 @@ export const loginUser = (code) => {
 				displayNotification('There was an error logging in.', 'error', 3)
 			);
 			dispatch(logout());
+		} finally {
+			dispatch(setLoading(false));
 		}
 	};
 };
@@ -83,6 +90,7 @@ export const loginUser = (code) => {
 export const refreshToken = () => {
 	return async (dispatch, getState) => {
 		try {
+			dispatch(setLoading(true));
 			const { auth } = getState();
 			const res = await authService.refresh({ spotifyId: auth.user.spotifyId });
 			dispatch(setUser(res));
@@ -104,6 +112,8 @@ export const refreshToken = () => {
 				)
 			);
 			dispatch(logout());
+		} finally {
+			dispatch(setLoading(false));
 		}
 	};
 };
@@ -111,6 +121,7 @@ export const refreshToken = () => {
 export const restoreUser = (parsedUser) => {
 	return async (dispatch) => {
 		try {
+			dispatch(setLoading(true));
 			dispatch(setUser(parsedUser));
 			dispatch(initializeEntries());
 			dispatch(
@@ -133,10 +144,12 @@ export const restoreUser = (parsedUser) => {
 				)
 			);
 			dispatch(logout());
+		} finally {
+			dispatch(setLoading(false));
 		}
 	};
 };
 
-export const { setUser, logout } = authSlice.actions;
+export const { setLoading, setUser, logout } = authSlice.actions;
 
 export default authSlice.reducer;

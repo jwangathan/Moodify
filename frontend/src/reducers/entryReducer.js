@@ -39,7 +39,6 @@ const entrySlice = createSlice({
 export const initializeEntries = () => {
 	return async (dispatch) => {
 		try {
-			console.log('INITIALIZING ENTRIES');
 			const entries = await entryService.getAll();
 			dispatch(setEntries(entries));
 		} catch (err) {
