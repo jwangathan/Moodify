@@ -51,7 +51,7 @@ const authSlice = createSlice({
 			entryService.resetToken();
 			userService.resetToken();
 			state.loading = false;
-			return initialState;
+			state.user = null;
 		},
 	},
 });
@@ -66,12 +66,12 @@ export const loginUser = (code) => {
 			const { auth } = getState();
 			setRefreshTimeout({
 				dispatch,
-				expiresIn: auth.expiresAt - Math.floor(Date.now() / 1000),
+				expiresIn: auth.user.expiresAt - Math.floor(Date.now() / 1000),
 			});
 
 			dispatch(
 				displayNotification(
-					`${auth.user.displayName} has been logged in.`,
+					`${auth.user.user.displayName} has been logged in.`,
 					'success',
 					3
 				)

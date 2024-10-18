@@ -7,7 +7,6 @@ const {
 	getRecommendations,
 	arraysNotEqual,
 	getPlaylist,
-	checkPlaylist,
 	createPlaylist,
 	addTracksToPlaylist,
 	removeTracksFromPlaylist,
@@ -20,8 +19,9 @@ entryRouter.get('/', async (req, res) => {
 	const entries = await Entry.find({ user: user._id }).populate('user', {
 		spotifyId: 1,
 	});
+	console.log('HELLO');
 
-	res.json(entries);
+	res.status(200).json(entries);
 });
 
 //retrieves specific entry
@@ -69,10 +69,10 @@ entryRouter.get('/:id', async (req, res) => {
 						selectedTracks: matchingTracks,
 					};
 					await entry.save();
-					return res.json({ updated: true, id: entry.id, entry });
+					return res.status(200).json({ updated: true, id: entry.id, entry });
 				} else {
 					//if values are the same
-					return res.json({ updated: false, id: entry.id, entry });
+					return res.status(200).json({ updated: false, id: entry.id, entry });
 				}
 			} catch (err) {
 				console.error('Error retrieving playlist: ', err.response?.data || err);

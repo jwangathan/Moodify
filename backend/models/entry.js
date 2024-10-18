@@ -9,10 +9,10 @@ const entrySchema = new mongoose.Schema({
 		{
 			id: { type: String, required: true },
 			name: { type: String, required: true },
-			artists: [{ id: String, name: { type: String, required: true } }],
+			artists: [{ id: String, name: { type: String } }],
 			album: {
 				id: String,
-				name: { type: String, required: true },
+				name: { type: String },
 				image: { type: String },
 			},
 			previewUrl: String,

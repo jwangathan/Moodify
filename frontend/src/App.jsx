@@ -22,7 +22,6 @@ const App = () => {
 	const dispatch = useDispatch();
 	const user = useSession();
 	const entries = useSelector((state) => state.entries);
-	const { loading } = useSelector((state) => state.auth);
 	const { isCountdownVisible } = useSelector((state) => state.countdown);
 
 	useEffect(() => {
