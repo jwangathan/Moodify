@@ -19,7 +19,6 @@ entryRouter.get('/', async (req, res) => {
 	const entries = await Entry.find({ user: user._id }).populate('user', {
 		spotifyId: 1,
 	});
-	console.log('HELLO');
 
 	res.status(200).json(entries);
 });
