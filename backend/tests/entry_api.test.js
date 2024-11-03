@@ -6,29 +6,36 @@ const User = require('../models/user');
 const api = supertest(app);
 const axios = require('axios');
 
-// jest.mock('../models/entry');
-// jest.mock('../models/user');
 jest.mock('axios');
 
 describe('Entry API', () => {
 	let user, entries;
 
 	beforeEach(async () => {
+		axios.get.mockReset();
 		user = new User({ spotifyId: 'mockSpotifyId', displayName: 'Mock User' });
 
 		await user.save();
 		entries = [
 			new Entry({
 				user: user._id,
+				situation: 'I feel happy',
+				emotion: 'happy',
 				tracks: [{ id: 'track1', name: 'trackName1' }],
 			}),
 			new Entry({
 				user: user._id,
+				situation: 'I feel sad',
+				emotion: 'sad',
 				tracks: [{ id: 'track2', name: 'trackName2' }],
 			}),
 		];
 
 		await Entry.insertMany(entries);
+
+		axios.get.mockResolvedValueOnce({
+			data: { id: user.spotifyId },
+		});
 	});
 
 	afterEach(async () => {
@@ -42,9 +49,6 @@ describe('Entry API', () => {
 
 	describe('GET /entry', () => {
 		it('should return all entries for the logged in user', async () => {
-			axios.get.mockResolvedValue({
-				data: { id: user.spotifyId },
-			});
 			const res = await api
 				.get('/api/entry')
 				.set('Authorization', 'Bearer mocked-token')
@@ -59,9 +63,23 @@ describe('Entry API', () => {
 	});
 
 	describe('GET /entry/:id', () => {
+		beforeEach(() => {
+			axios.get.mockResolvedValueOnce({
+				data: {
+					id: 'mockPlaylistId',
+					snapshot_id: 'newSnapshotId',
+					tracks: {
+						items: [{ track: { id: 'track1' } }],
+					},
+				},
+			});
+			axios.get.mockResolvedValueOnce({
+				data: { items: [{ id: 'mockPlaylistId' }], next: null },
+			});
+		});
+
 		it('should return a specific entry for the logged in user', async () => {
 			const entryToGet = entries[0];
-
 			const res = await api
 				.get(`/api/entry/${entryToGet._id}`)
 				.set('Authorization', 'Bearer mocked-token')
@@ -73,7 +91,6 @@ describe('Entry API', () => {
 
 		it('should return 404 if entry does not exist', async () => {
 			const nonExistentId = new mongoose.Types.ObjectId();
-
 			await api
 				.get(`/api/entry/${nonExistentId}`)
 				.set('Authorization', 'Bearer mocked-token')
@@ -91,7 +108,6 @@ describe('Entry API', () => {
 				tracks: [{ id: 'track3', name: 'trackName3' }],
 			});
 			await otherEntry.save();
-
 			await api
 				.get(`/api/entry/${otherEntry._id}`)
 				.set('Authorization', 'Bearer mocked-token')
@@ -100,6 +116,31 @@ describe('Entry API', () => {
 	});
 
 	describe('POST /entry', () => {
+		beforeEach(() => {
+			axios.get.mockResolvedValue({
+				data: {
+					tracks: [
+						{
+							id: 'trackId1',
+							name: 'trackName1',
+							artists: [
+								{ id: 'artistId1', name: 'artistName1' },
+								{ id: 'artistId2', name: 'artistName2' },
+							],
+							album: {
+								id: 'albumId1',
+								name: 'albumName1',
+								images: [{ url: 'imageUrl1' }],
+							},
+							preview_url: 'prevUrl1',
+							external_urls: {
+								spotify: 'extUrl1',
+							},
+						},
+					],
+				},
+			});
+		});
 		it('should create a new entry for the user', async () => {
 			const newEntry = {
 				situation: 'I feel tired',
@@ -108,22 +149,6 @@ describe('Entry API', () => {
 				seed_tracks: ['track1'],
 				seed_genres: ['genre1'],
 			};
-			axios.post.mockResolvedValue({
-				data: {
-					tracks: [
-						{
-							id: 'trackId',
-							name: 'trackName',
-							album: {
-								id: 'albumId',
-								name: 'albumName',
-								images: [{ url: 'imageURL' }],
-							},
-							artists: [{ id: 'artistId', name: 'artistName' }],
-						},
-					],
-				},
-			});
 
 			const res = await api
 				.post('/api/entry')
@@ -133,6 +158,76 @@ describe('Entry API', () => {
 
 			expect(res.body.situation).toBe('I feel tired');
 			expect(res.body.tracks).toHaveLength(1);
+		});
+	});
+
+	describe('PUT /entry/:id', () => {
+		it('should create a playlist and update the entry', async () => {
+			const entryToUpdate = entries[0];
+
+			axios.post.mockResolvedValueOnce({
+				data: {
+					collaborative: false,
+					description: `A playlist to help you feel more ${entryToUpdate.emotion}`,
+					id: 'mockPlaylistId',
+				},
+			});
+			axios.post.mockResolvedValueOnce({
+				data: {
+					snapshot_id: 'newSnapshotId',
+				},
+			});
+
+			const res = await api
+				.put(`/api/entry/${entryToUpdate._id}`)
+				.set('Authorization', 'Bearer mocked-token')
+				.send({ selectedTracks: ['track1', 'track2'] })
+				.expect(201);
+			console.log(res.body);
+			expect(res.body.message).toBe(
+				'Playlist created and songs added to Spotify'
+			);
+			expect(res.body.entry.playlist.id).toBe('mockPlaylistId');
+			expect(res.body.entry.playlist.selectedTracks).toEqual([
+				'track1',
+				'track2',
+			]);
+			expect(res.body.entry.playlist.snapshot).toBe('newSnapshotId');
+		});
+	});
+
+	describe('DELETE /entry/:id', () => {
+		it('should delete the entry for the logged in user', async () => {
+			const entryToDelete = entries[0];
+			await api
+				.delete(`/api/entry/${entryToDelete._id}`)
+				.set('Authorization', 'Bearer mocked-token')
+				.expect(204);
+
+			const remainingEntries = await Entry.find({});
+			expect(remainingEntries).toHaveLength(1);
+			expect(remainingEntries[0]._id.toString()).toBe(
+				entries[1]._id.toString()
+			);
+		});
+
+		it('should return 401 if user is not authorized to delete the entry', async () => {
+			const otherUser = new User({
+				spotifyId: 'otherSpotifyId',
+				displayName: 'Other User',
+			});
+			await otherUser.save();
+
+			const otherEntry = new Entry({
+				user: otherUser._id,
+				tracks: [{ id: 'track3', name: 'trackName3' }],
+			});
+			await otherEntry.save();
+
+			await api
+				.delete(`/api/entry/${otherEntry._id}`)
+				.set('Authorization', 'Bearer mocked-token')
+				.expect(401);
 		});
 	});
 });

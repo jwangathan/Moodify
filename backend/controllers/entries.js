@@ -36,7 +36,6 @@ entryRouter.get('/:id', async (req, res) => {
 				.status(401)
 				.json({ error: 'You are not authorized to view this entry' });
 		}
-
 		//if a playlist exists, check it
 		if (entry.playlist.id) {
 			try {
@@ -169,6 +168,7 @@ entryRouter.put('/:id', async (req, res) => {
 
 		//check if playlist exists
 		if (targetEntry.playlist && targetEntry.playlist.id) {
+			console.log('FIRST');
 			const playlistId = targetEntry.playlist.id;
 			const playlist = await getPlaylist(playlistId, token);
 			if (!playlist.exists) {
@@ -178,11 +178,13 @@ entryRouter.put('/:id', async (req, res) => {
 		}
 
 		if (!targetEntry.playlist || !targetEntry.playlist.id) {
+			console.log('SECOND');
 			const newPlaylist = await createPlaylist(
 				user.spotifyId,
 				targetEntry.emotion,
 				token
 			);
+			console.log('newPlaylist: ', newPlaylist);
 
 			const { snapshot_id: snapshot } = await addTracksToPlaylist(
 				newPlaylist.id,
@@ -204,6 +206,7 @@ entryRouter.put('/:id', async (req, res) => {
 				entry: targetEntry,
 			});
 		} else {
+			console.log('THIRD');
 			const oldSelectedSongs = targetEntry.playlist.selectedTracks;
 			const songsToAdd = selectedTracks.filter(
 				(song) => !oldSelectedSongs.includes(song)
