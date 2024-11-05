@@ -13,6 +13,7 @@ describe('Entry API', () => {
 
 	beforeEach(async () => {
 		axios.get.mockReset();
+		axios.post.mockReset();
 		user = new User({ spotifyId: 'mockSpotifyId', displayName: 'Mock User' });
 
 		await user.save();
@@ -27,7 +28,15 @@ describe('Entry API', () => {
 				user: user._id,
 				situation: 'I feel sad',
 				emotion: 'sad',
-				tracks: [{ id: 'track2', name: 'trackName2' }],
+				tracks: [
+					{ id: 'track2', name: 'trackName2' },
+					{ id: 'track3', name: 'trackName3' },
+				],
+				playlist: {
+					id: 'mockPlaylistId',
+					snapshot: 'newSnapshotId',
+					selectedTracks: ['track2'],
+				},
 			}),
 		];
 
@@ -193,6 +202,47 @@ describe('Entry API', () => {
 				'track2',
 			]);
 			expect(res.body.entry.playlist.snapshot).toBe('newSnapshotId');
+		});
+
+		it.skip('should update the existing playlist an update the entry', async () => {
+			const entryToUpdate = entries[1];
+
+			axios.get.mockResolvedValueOnce({
+				data: {
+					id: 'mockPlaylistId',
+					snapshot_id: 'newSnapshotId',
+					tracks: {
+						items: [{ track: { id: 'track3' } }],
+					},
+				},
+			});
+			axios.get.mockResolvedValueOnce({
+				data: { items: [{ id: 'mockPlaylistId' }], next: null },
+			});
+
+			const res = await api
+				.put(`/api/entry/${entryToUpdate._id}`)
+				.set('Authorization', 'Bearer mocked-token')
+				.send({ selectedTracks: ['track2', 'track3'] })
+				.expect(200);
+
+			expect(res.body.message).toBe(
+				'Playlist updated and songs added to Spotify'
+			);
+			expect(res.body.entry.playlist.selectedTracks).toEqual([
+				'track1',
+				'track2',
+			]);
+		});
+
+		it('should return 400 if selected tracks are not an array', async () => {
+			const entryToUpdate = entries[0];
+
+			await api
+				.put(`/api/entry/${entryToUpdate._id}`)
+				.set('Authorization', 'Bearer mocked-token')
+				.send({ selectedTracks: 'track1' })
+				.expect(400);
 		});
 	});
 

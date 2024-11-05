@@ -3,22 +3,21 @@ const mongoose = require('mongoose');
 const app = require('../app');
 const User = require('../models/user');
 const axios = require('axios');
-const { generateCode, generateRandomString } = require('../utils/loginService');
-
 const api = supertest(app);
 
-afterAll(async () => {
-	await mongoose.connection.close();
-});
+jest.mock('axios');
 
 describe('Login API', () => {
-	test.skip('GET /auth/login - generates login URL', async () => {
+	beforeEach(async () => {
+		axios.get.mockReset();
+	});
+	test('GET /auth/login - generates login URL', async () => {
 		const res = await api.get('/auth/login').expect(200);
 
 		expect(res.text).toContain('https://accounts.spotify.com/authorize');
 	});
 
-	test.skip('GET /auth/callback - handles login callback and retrieves tokens', async () => {
+	test('GET /auth/callback - handles login callback and retrieves tokens', async () => {
 		const mockCode = 'mockSpotifyCode';
 		const mockVerifier = 'mockVerifier';
 
