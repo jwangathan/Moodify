@@ -98,10 +98,6 @@ export const refreshToken = () => {
 				dispatch,
 				expiresIn: res.expiresAt - Math.floor(Date.now() / 1000),
 			});
-
-			dispatch(
-				displayNotification('Your session has been refreshed.', 'success', 3)
-			);
 		} catch (error) {
 			console.error('Failed to refresh token: ', error);
 			dispatch(

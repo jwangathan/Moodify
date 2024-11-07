@@ -5,7 +5,7 @@
 	"scripts": {
 		"start": "cross-env NODE_ENV=production node index.js",
 		"dev": "cross-env NODE_ENV=devlopment nodemon index.js",
-		"test": "cross-env NODE_ENV=test jest --verbose --runInBand",
+		"test": "cross-env NODE_ENV=test jest --verbose --runInBand --coverage",
 		"build:ui": "rm -rf dist && cd ../frontend/ && npm run build && cp -r dist ../backend",
 		"deploy": "fly deploy",
 		"deploy:full": "npm run build:ui && npm run deploy",

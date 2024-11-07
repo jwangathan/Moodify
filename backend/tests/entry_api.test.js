@@ -72,21 +72,6 @@ describe('Entry API', () => {
 	});
 
 	describe('GET /entry/:id', () => {
-		beforeEach(() => {
-			axios.get.mockResolvedValueOnce({
-				data: {
-					id: 'mockPlaylistId',
-					snapshot_id: 'newSnapshotId',
-					tracks: {
-						items: [{ track: { id: 'track1' } }],
-					},
-				},
-			});
-			axios.get.mockResolvedValueOnce({
-				data: { items: [{ id: 'mockPlaylistId' }], next: null },
-			});
-		});
-
 		it('should return a specific entry for the logged in user', async () => {
 			const entryToGet = entries[0];
 			const res = await api
@@ -94,8 +79,75 @@ describe('Entry API', () => {
 				.set('Authorization', 'Bearer mocked-token')
 				.expect(200);
 
+			expect(res.body.updated).toBe(false);
 			expect(res.body.id).toBe(entryToGet._id.toString());
 			expect(res.body.entry.tracks[0].name).toBe('trackName1');
+		});
+
+		it('should return a specific entry for the logged in user with updated playlist', async () => {
+			const entryToGet = entries[1];
+
+			axios.get.mockResolvedValueOnce({
+				data: {
+					id: 'mockPlaylistId',
+					snapshot_id: 'mockSnapshotId',
+					tracks: {
+						items: [
+							{ track: { id: 'track2', name: 'trackName2' } },
+							{ track: { id: 'track3', name: 'trackName3' } },
+						],
+					},
+				},
+			});
+			axios.get.mockResolvedValueOnce({
+				data: { items: [{ id: 'mockPlaylistId' }], next: null },
+			});
+
+			const res = await api
+				.get(`/api/entry/${entryToGet._id}`)
+				.set('Authorization', 'Bearer mocked-token')
+				.expect(200);
+
+			expect(res.body.updated).toBe(true);
+			expect(res.body.id).toBe(entryToGet._id.toString());
+			expect(res.body.entry.tracks[0].name).toBe('trackName2');
+			expect(res.body.entry.tracks[1].name).toBe('trackName3');
+			expect(res.body.entry.playlist.id).toBe('mockPlaylistId');
+			expect(res.body.entry.playlist.snapshot).toBe('mockSnapshotId');
+			expect(res.body.entry.playlist.selectedTracks[0]).toBe('track2');
+		});
+
+		it('should return a specific entry for the logged in user with the deleted playlist', async () => {
+			const entryToGet = entries[1];
+			//spotify has a bug that returns a playlist's information, even if it is deleted
+			axios.get.mockResolvedValueOnce({
+				data: {
+					id: 'mockPlaylistId',
+					snapshot_id: 'mockSnapshotId',
+					tracks: {
+						items: [
+							{ track: { id: 'track2', name: 'trackName2' } },
+							{ track: { id: 'track3', name: 'trackName3' } },
+						],
+					},
+				},
+			});
+			axios.get.mockResolvedValueOnce({
+				data: { items: [{ id: 'notMockPlaylistId' }], next: null },
+			});
+
+			const res = await api
+				.get(`/api/entry/${entryToGet._id}`)
+				.set('Authorization', 'Bearer mocked-token')
+				.expect(200);
+
+			expect(res.body.updated).toBe(true);
+			expect(res.body.id).toBe(entryToGet._id.toString());
+			expect(res.body.entry.tracks[0].name).toBe('trackName2');
+			expect(res.body.entry.tracks[1].name).toBe('trackName3');
+			expect(res.body.entry.playlist.id).toBe(null);
+			expect(res.body.entry.playlist.snapshot).toBe(null);
+			expect(res.body.entry.playlist.selectedTracks).toStrictEqual([]);
 		});
 
 		it('should return 404 if entry does not exist', async () => {
@@ -181,7 +233,7 @@ describe('Entry API', () => {
 					id: 'mockPlaylistId',
 				},
 			});
-			axios.post.mockResolvedValueOnce({
+			axios.put.mockResolvedValueOnce({
 				data: {
 					snapshot_id: 'newSnapshotId',
 				},
@@ -204,7 +256,7 @@ describe('Entry API', () => {
 			expect(res.body.entry.playlist.snapshot).toBe('newSnapshotId');
 		});
 
-		it.skip('should update the existing playlist an update the entry', async () => {
+		it('should update the existing playlist and update the entry', async () => {
 			const entryToUpdate = entries[1];
 
 			axios.get.mockResolvedValueOnce({
@@ -212,7 +264,7 @@ describe('Entry API', () => {
 					id: 'mockPlaylistId',
 					snapshot_id: 'newSnapshotId',
 					tracks: {
-						items: [{ track: { id: 'track3' } }],
+						items: [{ track: { id: 'track2' } }],
 					},
 				},
 			});
@@ -220,19 +272,25 @@ describe('Entry API', () => {
 				data: { items: [{ id: 'mockPlaylistId' }], next: null },
 			});
 
+			axios.put.mockResolvedValueOnce({
+				data: { snapshot_id: 'newSnapshotId' },
+			});
+
 			const res = await api
 				.put(`/api/entry/${entryToUpdate._id}`)
 				.set('Authorization', 'Bearer mocked-token')
 				.send({ selectedTracks: ['track2', 'track3'] })
-				.expect(200);
+				.expect(201);
 
 			expect(res.body.message).toBe(
-				'Playlist updated and songs added to Spotify'
+				'Playlist updated in Spotify and saved to database'
 			);
+			expect(res.body.entry.playlist.id).toBe('mockPlaylistId');
 			expect(res.body.entry.playlist.selectedTracks).toEqual([
-				'track1',
 				'track2',
+				'track3',
 			]);
+			expect(res.body.entry.playlist.snapshot).toBe('newSnapshotId');
 		});
 
 		it('should return 400 if selected tracks are not an array', async () => {

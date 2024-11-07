@@ -8,8 +8,7 @@ const {
 	arraysNotEqual,
 	getPlaylist,
 	createPlaylist,
-	addTracksToPlaylist,
-	removeTracksFromPlaylist,
+	updatePlaylist,
 } = require('../utils/playlistService');
 
 //retrieves entries by current user
@@ -45,11 +44,10 @@ entryRouter.get('/:id', async (req, res) => {
 				} = await getPlaylist(entry.playlist.id, req.token);
 
 				if (!exists) {
-					entry.playlist = { id: null, snapshot_id: null, selectedTracks: [] };
+					entry.playlist = { id: null, snapshot: null, selectedTracks: [] };
 					await entry.save();
 					return res.json({ updated: true, id: entry.id, entry });
 				}
-
 				const selectedTracks = tracks.items.map((t) => t.track.id);
 				const includedTracks = entry.tracks.map((t) => t.id);
 				const matchingTracks = selectedTracks.filter((t) =>
@@ -63,14 +61,11 @@ entryRouter.get('/:id', async (req, res) => {
 				) {
 					entry.playlist = {
 						id,
-						snapshot_id,
+						snapshot: snapshot_id,
 						selectedTracks: matchingTracks,
 					};
 					await entry.save();
 					return res.status(200).json({ updated: true, id: entry.id, entry });
-				} else {
-					//if values are the same
-					return res.status(200).json({ updated: false, id: entry.id, entry });
 				}
 			} catch (err) {
 				console.error('Error retrieving playlist: ', err.response?.data || err);
@@ -78,7 +73,7 @@ entryRouter.get('/:id', async (req, res) => {
 			}
 		}
 
-		return res.json({ message: 'No update needed', id: entry.id, entry });
+		return res.status(200).json({ updated: false, id: entry.id, entry });
 	} catch (err) {
 		return res.status(500).json({ error: 'Error retrieving/updating entry' });
 	}
@@ -168,7 +163,6 @@ entryRouter.put('/:id', async (req, res) => {
 
 		//check if playlist exists
 		if (targetEntry.playlist && targetEntry.playlist.id) {
-			console.log('FIRST');
 			const playlistId = targetEntry.playlist.id;
 			const playlist = await getPlaylist(playlistId, token);
 			if (!playlist.exists) {
@@ -178,15 +172,13 @@ entryRouter.put('/:id', async (req, res) => {
 		}
 
 		if (!targetEntry.playlist || !targetEntry.playlist.id) {
-			console.log('SECOND');
 			const newPlaylist = await createPlaylist(
 				user.spotifyId,
 				targetEntry.emotion,
 				token
 			);
-			console.log('newPlaylist: ', newPlaylist);
 
-			const { snapshot_id: snapshot } = await addTracksToPlaylist(
+			const { snapshot_id: snapshot } = await updatePlaylist(
 				newPlaylist.id,
 				selectedTracks,
 				token
@@ -206,31 +198,11 @@ entryRouter.put('/:id', async (req, res) => {
 				entry: targetEntry,
 			});
 		} else {
-			console.log('THIRD');
-			const oldSelectedSongs = targetEntry.playlist.selectedTracks;
-			const songsToAdd = selectedTracks.filter(
-				(song) => !oldSelectedSongs.includes(song)
+			const { snapshot_id: snapshot } = await updatePlaylist(
+				targetEntry.playlist.id,
+				selectedTracks,
+				token
 			);
-			const songsToDelete = oldSelectedSongs.filter(
-				(song) => !selectedTracks.includes(song)
-			);
-
-			let snapshot = targetEntry.playlist.snapshot;
-
-			if (songsToAdd.length > 0)
-				({ snapshot_id: snapshot } = await addTracksToPlaylist(
-					targetEntry.playlist.id,
-					songsToAdd,
-					token
-				));
-
-			if (songsToDelete.length > 0)
-				({ snapshot_id: snapshot } = await removeTracksFromPlaylist(
-					targetEntry.playlist.id,
-					songsToDelete,
-					snapshot,
-					token
-				));
 
 			targetEntry.playlist.selectedTracks = selectedTracks;
 			targetEntry.playlist.snapshot = snapshot;

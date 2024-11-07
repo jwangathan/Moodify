@@ -124,7 +124,6 @@ const checkPlaylist = async (targetId, token) => {
 			playlistFound = playlists.some((playlist) => playlist.id === targetId);
 
 			if (playlistFound) {
-				console.log('PLAYLIST FOUND');
 				return true;
 			}
 
@@ -170,61 +169,29 @@ const createPlaylist = async (spotifyId, mood, token) => {
 	}
 };
 
-const addTracksToPlaylist = async (playlistId, trackIds, token) => {
+const updatePlaylist = async (playlistId, trackIds, token) => {
 	try {
-		//make sure playlist isnt deleted. if it is, create one first.
-
-		console.log('add: ', trackIds);
+		console.log('update: ', trackIds);
 		const trackUris = trackIds.map((trackId) => `spotify:track:${trackId}`);
-		const params = {
+		const body = {
+			uris: trackUris,
+		};
+		const config = {
 			headers: {
 				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
 		};
 
-		const res = await axios.post(
+		const res = await axios.put(
 			`${baseUrl}/playlists/${playlistId}/tracks`,
-			{ uris: trackUris },
-			params
+			body,
+			config
 		);
 		return res.data;
 	} catch (error) {
-		console.error('Error adding tracks to playlist:', error.response.data);
-		throw new Error('Failed to add tracks to playlist');
-	}
-};
-
-const removeTracksFromPlaylist = async (
-	playlistId,
-	trackIds,
-	snapshot,
-	token
-) => {
-	try {
-		console.log('remove:', trackIds);
-
-		const trackUris = trackIds.map((trackId) => ({
-			uri: `spotify:track:${trackId}`,
-		}));
-
-		const params = {
-			data: { tracks: trackUris, snapshot_id: snapshot },
-			headers: {
-				Authorization: `Bearer ${token}`,
-				'Content-Type': 'application/json',
-			},
-		};
-
-		const res = await axios.delete(
-			`${baseUrl}/playlists/${playlistId}/tracks`,
-			params
-		);
-
-		return res.data;
-	} catch (error) {
-		console.error('Error removing tracks from playlist:', error.response.data);
-		throw new Error('Failed to remove tracks from playlist');
+		console.error('Error updating playlist:', error.response.data);
+		throw new Error('Failed to update playlist');
 	}
 };
 
@@ -235,6 +202,5 @@ module.exports = {
 	getPlaylist,
 	checkPlaylist,
 	createPlaylist,
-	addTracksToPlaylist,
-	removeTracksFromPlaylist,
+	updatePlaylist,
 };
