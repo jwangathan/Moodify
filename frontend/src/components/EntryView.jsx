@@ -8,6 +8,10 @@ import {
 } from '../reducers/entryReducer';
 import { CgAdd, CgCheckO } from 'react-icons/cg';
 import {
+	DescriptionBlock,
+	SituationText,
+	EmotionText,
+	PlaylistAccessButton,
 	BackButton,
 	RemoveButton,
 	SelectAllButton,
@@ -125,9 +129,26 @@ const EntryView = ({ entry }) => {
 			{entry && (
 				<div>
 					<Title>Your Selected Tracks</Title>
-					<BackButton onClick={() => navigate('/entries')}>
-						Return to Entries
-					</BackButton>
+					<DescriptionBlock>
+						<SituationText>
+							<strong>Situation: </strong> {entry.situation}
+						</SituationText>
+						<EmotionText>
+							<strong>Emotion: </strong> {entry.emotion}
+						</EmotionText>
+					</DescriptionBlock>
+					<ButtonContainer>
+						<BackButton onClick={() => navigate('/entries')}>
+							Return to Entries
+						</BackButton>
+						{entry.playlist && entry.playlist.id && entry.playlist.url && (
+							<SelectAllButton
+								onClick={() => window.open(entry.playlist.url, '_blank')}
+							>
+								Go to Spotify Playlist
+							</SelectAllButton>
+						)}
+					</ButtonContainer>
 					<ButtonContainer>
 						<RemoveButton
 							onClick={() => {

@@ -14,6 +14,7 @@ describe('Entry API', () => {
 	beforeEach(async () => {
 		axios.get.mockReset();
 		axios.post.mockReset();
+		axios.put.mockReset();
 		user = new User({ spotifyId: 'mockSpotifyId', displayName: 'Mock User' });
 
 		await user.save();

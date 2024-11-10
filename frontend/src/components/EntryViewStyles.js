@@ -178,3 +178,39 @@ export const Title = styled.h1`
 	font-weight: bold;
 	text-transform: uppercase;
 `;
+
+export const PlaylistAccessButton = styled.button`
+	background-color: #1db954;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+	position: absolute;
+	top: 20px;
+	right: 20px;
+
+	&:hover {
+		background-color: #1ed760;
+	}
+`;
+
+export const DescriptionBlock = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 20px 0;
+`;
+
+export const SituationText = styled.p`
+	font-size: 1rem;
+	color: #333;
+	margin: 5px 0;
+`;
+
+export const EmotionText = styled.p`
+	font-size: 1rem;
+	color: #333;
+	margin: 5px 0;
+`;

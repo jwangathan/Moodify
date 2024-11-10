@@ -5,19 +5,12 @@ import entries from '../services/entries';
 
 // user: {spotifyId}, situation, emotion, attributes,
 // tracks: {id, name, artists: {id, name}, album: {id, name, image}, previewUrl, externalUrl}}
-// playlist: { id, name }
-const initialState = {
-	loading: null,
-	entries: [],
-};
+// playlist: { id, snapshot, selectedTracks, url }
 
 const entrySlice = createSlice({
 	name: 'entries',
 	initialState: [],
 	reducers: {
-		// setLoading(state, action) {
-		// 	state.loading = action.payload;
-		// },
 		updateEntry(state, action) {
 			const id = action.payload.id;
 			const newEntry = action.payload.entry;

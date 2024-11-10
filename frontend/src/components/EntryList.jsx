@@ -1,7 +1,12 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { EntryItem, ListItem, UnorderedList } from './EntryListStyles';
+import {
+	CenteredText,
+	EntryItem,
+	ListItem,
+	UnorderedList,
+} from './EntryListStyles';
 
 const Entry = ({ entry }) => {
 	const navigate = useNavigate();
@@ -24,7 +29,7 @@ const EntryList = () => {
 	const entries = useSelector((state) => state.entries);
 
 	if (entries.length === 0) {
-		return <div>Create an Entry!</div>;
+		return <CenteredText>Create an Entry!</CenteredText>;
 	}
 
 	return (

@@ -166,7 +166,12 @@ entryRouter.put('/:id', async (req, res) => {
 			const playlistId = targetEntry.playlist.id;
 			const playlist = await getPlaylist(playlistId, token);
 			if (!playlist.exists) {
-				targetEntry.playlist = { id: null, snapshot: null, selectedTracks: [] };
+				targetEntry.playlist = {
+					id: null,
+					snapshot: null,
+					selectedTracks: [],
+					url: null,
+				};
 				await targetEntry.save();
 			}
 		}
@@ -174,6 +179,7 @@ entryRouter.put('/:id', async (req, res) => {
 		if (!targetEntry.playlist || !targetEntry.playlist.id) {
 			const newPlaylist = await createPlaylist(
 				user.spotifyId,
+				user.displayName,
 				targetEntry.emotion,
 				token
 			);
@@ -188,6 +194,7 @@ entryRouter.put('/:id', async (req, res) => {
 				id: newPlaylist.id,
 				snapshot: snapshot,
 				selectedTracks: selectedTracks,
+				url: newPlaylist.external_urls.spotify,
 			};
 
 			await targetEntry.save();

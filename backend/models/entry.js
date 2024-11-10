@@ -23,6 +23,7 @@ const entrySchema = new mongoose.Schema({
 		id: { type: String, default: null },
 		snapshot: { type: String, default: null },
 		selectedTracks: [{ type: String }],
+		url: { type: String, default: null },
 	},
 	createdAt: { type: Date, default: Date.now },
 });

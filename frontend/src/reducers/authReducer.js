@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import entryService from '../services/entries';
-import userService from '../services/users';
 import authService from '../services/auth';
 import setRefreshTimeout from '../hooks/setRefreshTimeout';
 import { initializeEntries } from './entryReducer';
@@ -42,14 +41,12 @@ const authSlice = createSlice({
 			window.localStorage.setItem('user', currUser);
 			if (newState.token) {
 				entryService.setToken(newState.token);
-				userService.setToken(newState.token);
 			}
 			state.loading = false;
 		},
 		logout(state, action) {
 			window.localStorage.clear();
 			entryService.resetToken();
-			userService.resetToken();
 			state.loading = false;
 			state.user = null;
 		},

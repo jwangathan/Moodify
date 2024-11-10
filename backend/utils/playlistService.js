@@ -137,10 +137,10 @@ const checkPlaylist = async (targetId, token) => {
 	return false;
 };
 
-const createPlaylist = async (spotifyId, mood, token) => {
+const createPlaylist = async (spotifyId, displayName, mood, token) => {
 	try {
 		const body = {
-			name: `${spotifyId}'s Moodify Playlist`,
+			name: `${displayName}'s Moodify Playlist`,
 			public: false,
 			description: `A playlist to help you feel more ${mood}`,
 		};

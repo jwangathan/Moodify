@@ -86,6 +86,7 @@ loginRouter.get('/callback', async (req, res) => {
 			id: artist.id,
 			name: artist.name,
 			genres: artist.genres,
+			url: artist.external_urls.spotify,
 		}));
 
 		const genreCounts = {};
@@ -111,6 +112,7 @@ loginRouter.get('/callback', async (req, res) => {
 			id: track.id,
 			name: track.name,
 			artists: track.artists.map((artist) => artist.name),
+			url: track.external_urls.spotify,
 		}));
 
 		await User.findOneAndUpdate(
@@ -149,15 +151,17 @@ loginRouter.get('/callback', async (req, res) => {
 
 loginRouter.post('/refresh', async (req, res) => {
 	const { spotifyId } = req.body;
-	const { refreshToken } = await User.findOne({ spotifyId });
+	const user = await User.findOne({ spotifyId });
 
-	if (!refreshToken)
+	if (!user) return res.status(404).json({ error: 'User not found' });
+
+	if (!user.refreshToken)
 		return res.status(401).json({ error: 'Refresh token not found' });
 
 	try {
 		const body = new URLSearchParams({
 			grant_type: 'refresh_token',
-			refresh_token: refreshToken,
+			refresh_token: user.refreshToken,
 			client_id: process.env.CLIENT_ID,
 		});
 
@@ -174,10 +178,6 @@ loginRouter.post('/refresh', async (req, res) => {
 		);
 
 		const { access_token, refresh_token, expires_in } = newRefresh.data;
-
-		const user = await User.findOne({ refreshToken });
-
-		if (!user) return res.status(404).json({ error: 'User not found' });
 
 		const expiresAt = Math.floor(Date.now() / 1000) + expires_in;
 

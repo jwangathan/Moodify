@@ -51,3 +51,12 @@ export const UnorderedList = styled.ul`
 	max-width: 800px;
 	margin: 0 auto;
 `;
+
+export const CenteredText = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	font-size: 2rem;
+	font-weight: bold;
+`;

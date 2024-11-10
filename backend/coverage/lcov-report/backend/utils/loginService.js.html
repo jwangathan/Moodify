@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">16.66% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/18</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">17.64% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/17</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -98,70 +98,70 @@
 <a name='L33'></a><a href='#L33'>33</a>
 <a name='L34'></a><a href='#L34'>34</a>
 <a name='L35'></a><a href='#L35'>35</a>
-<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">64x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const generateCode = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const generateCode = async () =&gt; {
 	const possible =
-<span class="cstat-no" title="statement not covered" >		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';</span>
-	const randomValues = <span class="cstat-no" title="statement not covered" >crypto.getRandomValues(new Uint8Array(64));</span>
-	const randomString = <span class="cstat-no" title="statement not covered" >randomValues.reduce(</span>
-<span class="fstat-no" title="function not covered" >		(a</span>cc, x) =&gt; <span class="cstat-no" title="statement not covered" >acc + possible[x % possible.length],</span>
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const randomValues = crypto.getRandomValues(new Uint8Array(64));
+	const randomString = randomValues.reduce(
+		(acc, x) =&gt; acc + possible[x % possible.length],
 		''
 	);
 &nbsp;
-	const code_verifier = <span class="cstat-no" title="statement not covered" >randomString;</span>
-	const data = <span class="cstat-no" title="statement not covered" >new TextEncoder().encode(code_verifier);</span>
-	const hashed = <span class="cstat-no" title="statement not covered" >await crypto.subtle.digest('SHA-256', data);</span>
-	const code_challenge_base64 = <span class="cstat-no" title="statement not covered" >btoa(</span>
+	const code_verifier = randomString;
+	const data = new TextEncoder().encode(code_verifier);
+	const hashed = await crypto.subtle.digest('SHA-256', data);
+	const code_challenge_base64 = btoa(
 		String.fromCharCode(...new Uint8Array(hashed))
 	)
 		.replace(/=/g, '')
 		.replace(/\+/g, '-')
 		.replace(/\//g, '_');
-<span class="cstat-no" title="statement not covered" >	return { code_verifier, code_challenge_base64 };</span>
+	return { code_verifier, code_challenge_base64 };
 };
 &nbsp;
-const generateRandomString = <span class="fstat-no" title="function not covered" >(l</span>ength) =&gt; {
-	let text = <span class="cstat-no" title="statement not covered" >'';</span>
+const generateRandomString = (length) =&gt; {
+	let text = '';
 	const possible =
-<span class="cstat-no" title="statement not covered" >		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';</span>
-<span class="cstat-no" title="statement not covered" >	for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; length; i++) {</span>
-<span class="cstat-no" title="statement not covered" >		text += possible.charAt(Math.floor(Math.random() * possible.length));</span>
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for (let i = 0; i &lt; length; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}
-<span class="cstat-no" title="statement not covered" >	return text;</span>
+	return text;
 };
 &nbsp;
 module.exports = {
@@ -175,7 +175,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-07T08:31:03.501Z
+                at 2024-11-10T08:11:33.776Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
