@@ -21,6 +21,20 @@ const Footer = () => {
 					<FaLinkedin /> LinkedIn
 				</a>
 			</p>
+			<p>
+				Content powered by
+				<a
+					href="https://www.spotify.com"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<img
+						src="/assets/spotifyLogo.png"
+						alt="Spotify Logo"
+						style={{ width: '80px', verticalAlign: 'middle' }}
+					/>
+				</a>
+			</p>
 		</FooterContainer>
 	);
 };

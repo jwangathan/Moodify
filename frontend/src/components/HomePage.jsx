@@ -26,7 +26,12 @@ const HomePage = () => {
 							<ListHeader>Top Artists (Past 6 months)</ListHeader>
 							<OrderedList>
 								{user.topArtists.map((artist) => (
-									<li key={artist.id}>{artist.name}</li>
+									<li
+										key={artist.id}
+										onClick={() => window.open(artist.url, '_blank')}
+									>
+										{artist.name}
+									</li>
 								))}
 							</OrderedList>
 						</ListWrapper>
@@ -42,7 +47,10 @@ const HomePage = () => {
 							<ListHeader>Top Tracks (Past 6 months)</ListHeader>
 							<OrderedList>
 								{user.topTracks.map((track) => (
-									<li key={track.id}>
+									<li
+										key={track.id}
+										onClick={() => window.open(track.url, '_blank')}
+									>
 										{track.name} - {track.artists.join(', ')}
 									</li>
 								))}

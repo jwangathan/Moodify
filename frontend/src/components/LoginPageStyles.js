@@ -49,3 +49,29 @@ export const LoginButton = styled.button`
 		transform: translateY(1px);
 	}
 `;
+
+export const About = styled.div`
+	margin: 10px 0 20px 0;
+	max-width: 600px;
+	font-size: 1rem;
+	color: #2d3436;
+	line-height: 1.6;
+	text-align: center;
+
+	p {
+		margin-bottom: 15px;
+	}
+
+	strong {
+		color: #1b954;
+		font-weight: 700;
+	}
+`;
+
+export const SectionHeading = styled.h2`
+	font-size: 1.8rem;
+	color: #23436;
+	margin: 20px 0 10px;
+	font-weight: 600;
+	text-align: center;
+`;

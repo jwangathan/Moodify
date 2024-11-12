@@ -95,7 +95,18 @@ export const AlbumImage = styled.img`
 	width: 50px;
 	height: 50px;
 	object-fit: cover;
-	border-radius: 8px;
+	border-radius: 2px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+	@media (min-width: 1024px) {
+		border-radius: 4px; /* large devices */
+	}
+
+	&:hover {
+		transform: scale(1.05);
+		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+	}
 `;
 
 export const TrackHeader = styled.div`

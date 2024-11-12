@@ -44,6 +44,7 @@ export const OrderedList = styled.ol`
 		&:hover {
 			color: #333;
 			font-weight: 600;
+			cursor: pointer;
 		}
 	}
 `;

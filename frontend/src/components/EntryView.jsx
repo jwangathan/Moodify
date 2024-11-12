@@ -35,7 +35,14 @@ const Track = ({ track, onSelect, isSelected, isExpanded, toggleDetails }) => {
 	return (
 		<TrackCard onClick={toggleDetails}>
 			<TrackHeader>
-				<AlbumImage src={track.album.image} alt={`${track.album.name}`} />
+				<AlbumImage
+					src={track.album.image}
+					alt={`${track.album.name}`}
+					onClick={(e) => {
+						e.stopPropagation();
+						window.open(track.externalUrl, '_blank');
+					}}
+				/>
 				<TrackName>{track.name}</TrackName>
 				<SelectButton
 					onClick={(e) => {

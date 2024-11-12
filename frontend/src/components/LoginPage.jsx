@@ -5,6 +5,8 @@ import {
 	Title,
 	Description,
 	LoginButton,
+	About,
+	SectionHeading,
 } from './LoginPageStyles';
 
 const LoginPage = () => {
@@ -23,6 +25,28 @@ const LoginPage = () => {
 		<TextContainer>
 			<Title>Moodify</Title>
 			<Description>Using music to meet your mood goals</Description>
+			<About>
+				<SectionHeading>About</SectionHeading>
+				<p>
+					Welcome to <strong>Moodify</strong>! This is a personal project
+					designed as a journaling app where users can log their daily highs and
+					lows, along with their desired emotional outcomes from these
+					experiences. By analyzing this input, Moodify recommends music that
+					aligns with users' mood goals.
+				</p>
+				{user && (
+					<>
+						<SectionHeading>How it Works</SectionHeading>
+						<p>
+							Users can record emotions in the <strong>Question</strong> tab,
+							where they are prompted to describe a situation and a desired
+							mood. This generates an entry with recommended songs, allowing
+							users to select and compile them into playlists. You can manage
+							all past entries in the <strong>My Playlists</strong> tab.
+						</p>
+					</>
+				)}
+			</About>
 			{!user && (
 				<LoginButton onClick={handleLogin}>Login To Spotify</LoginButton>
 			)}
