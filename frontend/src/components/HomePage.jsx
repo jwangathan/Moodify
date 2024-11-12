@@ -3,6 +3,7 @@ import {
 	ListContainer,
 	ListWrapper,
 	ListHeader,
+	ListItem,
 	OrderedList,
 	Centered,
 } from './HomePageStyles';
@@ -25,13 +26,14 @@ const HomePage = () => {
 						<ListWrapper>
 							<ListHeader>Top Artists (Past 6 months)</ListHeader>
 							<OrderedList>
-								{user.topArtists.map((artist) => (
-									<li
+								{user.topArtists.map((artist, index) => (
+									<ListItem
 										key={artist.id}
 										onClick={() => window.open(artist.url, '_blank')}
+										delay={`${index * 0.2}s`}
 									>
 										{artist.name}
-									</li>
+									</ListItem>
 								))}
 							</OrderedList>
 						</ListWrapper>
@@ -39,20 +41,23 @@ const HomePage = () => {
 							<ListHeader>Top Genres (Past 6 months)</ListHeader>
 							<OrderedList>
 								{user.topGenres.map((genre, index) => (
-									<li key={index}>{genre}</li>
+									<ListItem key={index} delay={`${index * 0.2}s`}>
+										{genre}
+									</ListItem>
 								))}
 							</OrderedList>
 						</ListWrapper>
 						<ListWrapper>
 							<ListHeader>Top Tracks (Past 6 months)</ListHeader>
 							<OrderedList>
-								{user.topTracks.map((track) => (
-									<li
+								{user.topTracks.map((track, index) => (
+									<ListItem
 										key={track.id}
 										onClick={() => window.open(track.url, '_blank')}
+										delay={`${index * 0.2}s`}
 									>
 										{track.name} - {track.artists.join(', ')}
-									</li>
+									</ListItem>
 								))}
 							</OrderedList>
 						</ListWrapper>

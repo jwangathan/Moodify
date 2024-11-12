@@ -8,6 +8,8 @@ export const Navbar = styled.nav`
 	align-items: center;
 	justify-content: space-between;
 	color: white;
+	position: relative;
+	width: 100%;
 `;
 
 export const Brand = styled.div`
@@ -20,6 +22,9 @@ export const Brand = styled.div`
 export const Toggle = styled.div`
 	display: flex;
 	align-items: center;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 `;
 
 export const NavList = styled.ul`
@@ -27,6 +32,7 @@ export const NavList = styled.ul`
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	justify-content: center;
 `;
 
 export const NavItem = styled.li`

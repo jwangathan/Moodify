@@ -34,9 +34,6 @@ const Navigation = () => {
 						<StyledLink to="/home">User Info</StyledLink>
 					</NavItem>
 					<NavItem>
-						<StyledLink to="/survey">Question</StyledLink>
-					</NavItem>
-					<NavItem>
 						<StyledLink to="/entries">My Playlists</StyledLink>
 					</NavItem>
 				</NavList>

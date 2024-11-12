@@ -16,25 +16,22 @@ const EntryCallbackPage = () => {
 			try {
 				if (location.state?.situation && location.state?.emotion) {
 					const { situation, emotion } = location.state;
-					const seed_artists = user.topArtists
-						.slice(0, 2)
-						.map((artist) => artist.id)
-						.join();
-					const seed_tracks = user.topTracks[0].id;
+					let seed_artists = '';
+					if (user.topArtists.length > 0) {
+						seed_artists = user.topArtists
+							.slice(0, 2)
+							.map((artist) => artist.id)
+							.join();
+					}
 					const seed_genres = user.topGenres.slice(0, 2).join();
 					const newEntry = await dispatch(
-						createEntry(
-							seed_artists,
-							seed_genres,
-							seed_tracks,
-							situation,
-							emotion
-						)
+						createEntry(seed_artists, seed_genres, situation, emotion)
 					);
 
 					navigate(`/entries/${newEntry.id}`);
 				}
 			} catch (error) {
+				navigate('/question');
 				console.log(error);
 			}
 		};

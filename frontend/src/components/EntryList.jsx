@@ -6,6 +6,9 @@ import {
 	EntryItem,
 	ListItem,
 	UnorderedList,
+	Heading,
+	Button,
+	ButtonContainer,
 } from './EntryListStyles';
 
 const Entry = ({ entry }) => {
@@ -27,13 +30,25 @@ const Entry = ({ entry }) => {
 
 const EntryList = () => {
 	const entries = useSelector((state) => state.entries);
+	const navigate = useNavigate();
 
-	if (entries.length === 0) {
-		return <CenteredText>Create an Entry!</CenteredText>;
-	}
+	const handleClick = () => {
+		navigate('/question');
+	};
 
 	return (
 		<>
+			<Heading>Your Mood Journal</Heading>
+			<ButtonContainer>
+				{entries.length === 0 ? (
+					<CenteredText>
+						<p>Share your life's ups and downs, and see how music can help</p>
+						<Button onClick={handleClick}>Create your first entry</Button>
+					</CenteredText>
+				) : (
+					<Button onClick={handleClick}>Add New Entry</Button>
+				)}
+			</ButtonContainer>
 			{entries && (
 				<div>
 					<UnorderedList>

@@ -1,4 +1,16 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const fadeIn = keyframes`
+ from {
+	opacity: 0;
+	transform: translateY(20px);
+ }
+
+ to {
+	opacity: 1;
+	transform: translateY(0);
+ }
+`;
 
 export const BackButton = styled.button`
 	background-color: #5c85ff;
@@ -8,7 +20,9 @@ export const BackButton = styled.button`
 	font-size: 1rem;
 	border-radius: 5px;
 	cursor: pointer;
-	margin-bottom: 20px;
+	margin: 10px;
+	opacity: 0;
+	animation: ${fadeIn} 0.8s ease-in 1s forwards;
 
 	&:hover {
 		background-color: #4a6fd1;
@@ -23,8 +37,10 @@ export const RemoveButton = styled.button`
 	font-size: 1rem;
 	border-radius: 5px;
 	cursor: pointer;
-	margin: 10px 0;
+	margin: 10px;
 	transition: background-color 0.2s ease;
+	opacity: 0;
+	animation: ${fadeIn} 1s ease-in 1s forwards;
 
 	&:hover {
 		background-color: #ff1a1a;
@@ -34,7 +50,6 @@ export const RemoveButton = styled.button`
 export const ButtonContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 20px;
 	align-items: center;
 `;
 
@@ -48,6 +63,8 @@ export const SelectAllButton = styled.button`
 	cursor: pointer;
 	margin: 10px 10px 10px 0;
 	transition: background-color 0.2s ease;
+	opacity: 0;
+	animation: ${fadeIn} 1s ease-in 1s forwards;
 
 	&:hover {
 		background-color: #45a049;
@@ -62,8 +79,10 @@ export const DeselectAllButton = styled.button`
 	font-size: 1rem;
 	border-radius: 5px;
 	cursor: pointer;
-	margin: 10px 10px 10px 0;
+	margin: 0px 10px 0px 10px;
 	transition: background-color 0.2s ease;
+	opacity: 0;
+	animation: ${fadeIn} 1s ease-in 1s forwards;
 
 	&:hover {
 		background-color: #fb8c00;
@@ -85,6 +104,8 @@ export const TrackCard = styled.div`
 	padding: 10px;
 	transition: background 0.3s;
 	cursor: pointer;
+	opacity: 0;
+	animation: ${fadeIn} 1.5s ease-in 1s forwards;
 
 	&:hover {
 		background-color: #f0f0f0;
@@ -170,6 +191,8 @@ export const PlaylistButton = styled.button`
 	margin: 20px auto;
 	display: block;
 	text-align: center;
+	opacity: 0;
+	animation: ${fadeIn} 1.75s ease-in forwards;
 
 	&:hover {
 		background-color: ${({ disabled }) => (disabled ? '#ddd' : '#4a6fd1')};
@@ -188,6 +211,9 @@ export const Title = styled.h1`
 	margin-bottom: 20px;
 	font-weight: bold;
 	text-transform: uppercase;
+	opacity: 0;
+	padding-top: 10px;
+	animation: ${fadeIn} 0.5s ease-in 1s forwards;
 `;
 
 export const PlaylistAccessButton = styled.button`
@@ -201,6 +227,8 @@ export const PlaylistAccessButton = styled.button`
 	position: absolute;
 	top: 20px;
 	right: 20px;
+	opacity: 0;
+	animation: ${fadeIn} 0.8s ease-in 1s forwards
 
 	&:hover {
 		background-color: #1ed760;
@@ -212,6 +240,8 @@ export const DescriptionBlock = styled.div`
 	flex-direction: column;
 	align-items: center;
 	margin: 20px 0;
+	opacity: 0;
+	animation: ${fadeIn} 0.5s ease-in 1s forwards;
 `;
 
 export const SituationText = styled.p`

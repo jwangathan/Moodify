@@ -83,21 +83,33 @@ entryRouter.get('/:id', async (req, res) => {
 entryRouter.post('/', async (req, res) => {
 	const user = req.user;
 	const token = req.token;
-	const { seed_artists, seed_tracks, seed_genres, situation, emotion } =
-		req.body;
+	const { seed_artists, seed_genres, situation, emotion } = req.body;
 	try {
-		const prompt = `User situation: ${situation}\nDesired emotion: ${emotion}\nProvide suitable values on the given scale for acousticness (0.0-1.0), danceability (0.0-1.0), energy(0.0-1.0), instrumentalness(0.0-1.0), liveness(0.0-1.0), loudness(dB), popularity(0-100), speechiness(0.0-1.0), tempo(BPM), and valence(0.0-1.0). Give me ONLY the JSON values.`;
+		const prompt = `User situation: ${situation}\nDesired emotion: ${emotion}\nProvide suitable values on the given scale for acousticness (0.0-1.0), danceability (0.0-1.0), energy(0.0-1.0), instrumentalness(0.0-1.0), liveness(0.0-1.0), loudness(dB), popularity(0-100), speechiness(0.0-1.0), tempo(BPM), and valence(0.0-1.0). Also choose the most applicable genre from the following list: ["acoustic", "afrobeat", "alt-rock", "alternative", "ambient", "anime", "black-metal", "bluegrass", "blues", "bossanova", "brazil", "breakbeat", "british", "cantopop", "chicago-house", "children", "chill", "classical", "club", "comedy", "country", "dance", "dancehall", "death-metal", "deep-house", "detroit-techno", "disco", "disney", "drum-and-bass", "dub", "dubstep", "edm", "electro", "electronic", "emo", "folk", "forro", "french", "funk", "garage", "german", "gospel", "goth", "grindcore", "groove", "grunge", "guitar", "happy", "hard-rock", "hardcore", "hardstyle", "heavy-metal", "hip-hop", "holidays", "honky-tonk", "house", "idm", "indian", "indie", "indie-pop", "industrial", "iranian", "j-dance", "j-idol", "j-pop", "j-rock", "jazz", "k-pop", "kids", "latin", "latino", "malay", "mandopop", "metal", "metal-misc", "metalcore", "minimal-techno", "movies", "mpb", "new-age", "new-release", "opera", "pagode", "party", "philippines-opm", "piano", "pop", "pop-film", "post-dubstep", "power-pop", "progressive-house", "psych-rock", "punk", "punk-rock", "r-n-b", "rainy-day", "reggae", "reggaeton", "road-trip", "rock", "rock-n-roll", "rockabilly", "romance", "sad", "salsa", "samba", "sertanejo", "show-tunes", "singer-songwriter", "ska", "sleep", "songwriter", "soul", "soundtracks", "spanish", "study", "summer", "swedish", "synth-pop", "tango", "techno", "trance", "trip-hop", "turkish", "work-out", "world-music"]. Give me ONLY the JSON values.`;
 		const result = await model.generateContent(prompt);
 		const response = result.response;
 		const chatResponse = response.text();
 		const attributes = toJSON(chatResponse);
-		if (!attributes) {
+		const expectedKeys = [
+			'acousticness',
+			'danceability',
+			'energy',
+			'instrumentalness',
+			'liveness',
+			'loudness',
+			'popularity',
+			'speechiness',
+			'tempo',
+			'valence',
+			'genre',
+		];
+		if (!attributes || !expectedKeys.every((key) => key in attributes)) {
 			return res.status(500).json({ message: 'Error parsing Gemini response' });
 		}
+
 		const recommendations = await getRecommendations(
 			seed_artists,
 			seed_genres,
-			seed_tracks,
 			attributes,
 			token
 		);

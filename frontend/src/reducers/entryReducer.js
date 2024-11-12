@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import entryService from '../services/entries';
 import { displayNotification } from './notificationReducer';
-import entries from '../services/entries';
 
 // user: {spotifyId}, situation, emotion, attributes,
 // tracks: {id, name, artists: {id, name}, album: {id, name, image}, previewUrl, externalUrl}}
@@ -47,19 +46,12 @@ export const initializeEntries = () => {
 	};
 };
 
-export const createEntry = (
-	seed_artists,
-	seed_genres,
-	seed_tracks,
-	situation,
-	emotion
-) => {
+export const createEntry = (seed_artists, seed_genres, situation, emotion) => {
 	return async (dispatch) => {
 		try {
 			const res = await entryService.createEntry({
 				seed_artists,
 				seed_genres,
-				seed_tracks,
 				situation,
 				emotion,
 			});

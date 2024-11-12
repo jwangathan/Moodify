@@ -17,6 +17,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import { Background, ContentWrapper } from './AppStyles';
 import useSession from './hooks/useSession';
+import { refreshToken } from './reducers/authReducer';
 
 const App = () => {
 	const dispatch = useDispatch();
@@ -47,7 +48,7 @@ const App = () => {
 					<Route path="/auth/callback" element={<LoginCallbackPage />} />
 					<Route path="/home" element={<ProtectedRoute element={HomePage} />} />
 					<Route
-						path="/survey"
+						path="/question"
 						element={<ProtectedRoute element={QuestionPage} />}
 					/>
 					<Route

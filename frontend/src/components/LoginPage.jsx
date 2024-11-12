@@ -38,11 +38,11 @@ const LoginPage = () => {
 					<>
 						<SectionHeading>How it Works</SectionHeading>
 						<p>
-							Users can record emotions in the <strong>Question</strong> tab,
-							where they are prompted to describe a situation and a desired
-							mood. This generates an entry with recommended songs, allowing
-							users to select and compile them into playlists. You can manage
-							all past entries in the <strong>My Playlists</strong> tab.
+							Users can record emotions in an entry, where they are prompted to
+							describe a situation and a desired mood. Generating an entry will
+							include recommended songs, allowing users to select and compile
+							them into playlists. You can create and manage these entries
+							within the <strong>My Playlists</strong> tab.
 						</p>
 					</>
 				)}

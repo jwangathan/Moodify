@@ -2,6 +2,10 @@ import styled from 'styled-components';
 
 const NotificationBase = styled.div`
 	display: flex;
+	position: fixed;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
 	align-items: center;
 	padding: 12px;
 	border-radius: 8px;
@@ -11,6 +15,7 @@ const NotificationBase = styled.div`
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 	color: #fff;
 	transition: all 0.3s ease;
+	z-index: 9999;
 
 	svg {
 		margin-right: 8px;

@@ -10,7 +10,6 @@ const toJSON = (res) => {
 const getRecommendations = async (
 	seed_artists,
 	seed_genres,
-	seed_tracks,
 	attributes,
 	token
 ) => {
@@ -25,12 +24,13 @@ const getRecommendations = async (
 		speechiness,
 		tempo,
 		valence,
+		genre,
 	} = attributes;
+	seed_genres += genre;
 	const params = {
 		limit: 20,
-		seed_artists, //missing 2
-		seed_genres, //missing 2,
-		seed_tracks, //missing 1,
+		seed_artists, //2 total (top 2 artists)
+		seed_genres, //3 total (top 2 genres + genre from attributes)
 		target_acousticness: acousticness,
 		target_danceability: danceability,
 		target_energy: energy,
