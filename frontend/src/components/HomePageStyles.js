@@ -98,6 +98,8 @@ export const Centered = styled.div`
 		object-fit: cover;
 		margin-bottom: 20px;
 		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+		padding-top: 45px;
+		background-color: #f0f0f0;
 	}
 
 	h1 {
