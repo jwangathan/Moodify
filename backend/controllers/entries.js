@@ -106,7 +106,6 @@ entryRouter.post('/', async (req, res) => {
 		if (!attributes || !expectedKeys.every((key) => key in attributes)) {
 			return res.status(500).json({ message: 'Error parsing Gemini response' });
 		}
-		console.log('GETTING RECOMMENDATIONS');
 
 		const recommendations = await getRecommendations(
 			seed_artists,
@@ -120,7 +119,6 @@ entryRouter.post('/', async (req, res) => {
 				.status(500)
 				.json({ message: 'Error producing song recommendations' });
 		}
-		console.log('CREATING ENRY');
 		const entry = new Entry({
 			user: user._id,
 			situation,
