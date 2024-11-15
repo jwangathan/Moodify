@@ -119,7 +119,6 @@ entryRouter.post('/', async (req, res) => {
 				.status(500)
 				.json({ message: 'Error producing song recommendations' });
 		}
-
 		const entry = new Entry({
 			user: user._id,
 			situation,

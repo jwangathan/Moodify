@@ -208,7 +208,6 @@ describe('Entry API', () => {
 				situation: 'I feel tired',
 				emotion: 'energized',
 				seed_artists: ['artist1'],
-				seed_tracks: ['track1'],
 				seed_genres: ['genre1'],
 			};
 
@@ -232,6 +231,7 @@ describe('Entry API', () => {
 					collaborative: false,
 					description: `A playlist to help you feel more ${entryToUpdate.emotion}`,
 					id: 'mockPlaylistId',
+					external_urls: { spotify: 'mockUrl' },
 				},
 			});
 			axios.put.mockResolvedValueOnce({
@@ -245,7 +245,6 @@ describe('Entry API', () => {
 				.set('Authorization', 'Bearer mocked-token')
 				.send({ selectedTracks: ['track1', 'track2'] })
 				.expect(201);
-			console.log(res.body);
 			expect(res.body.message).toBe(
 				'Playlist created and songs added to Spotify'
 			);
@@ -255,6 +254,10 @@ describe('Entry API', () => {
 				'track2',
 			]);
 			expect(res.body.entry.playlist.snapshot).toBe('newSnapshotId');
+			expect(res.body.entry.playlist.url).toBe('mockUrl');
+
+			const updatedEntry = await Entry.findById(entryToUpdate._id);
+			expect(updatedEntry.playlist).toBeDefined();
 		});
 
 		it('should update the existing playlist and update the entry', async () => {
