@@ -1,9 +1,11 @@
 import styled, { keyframes } from 'styled-components';
 
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
 const fadeIn = keyframes`
 	from {
-		opacity: 0;
-		transform: translateY(20px);
+		opacity: ${isTestEnvironment ? 1 : 0};
+		transform: ${isTestEnvironment ? 'none' : 'translateY(20px)'};
 	}
 
 	to {
@@ -60,8 +62,10 @@ export const LoginButton = styled.button`
 	padding: 12px 30px;
 	cursor: pointer;
 	transition: background-color 0.3s ease, transform 0.2s ease;
-	opacity: 0;
-	animation: ${fadeIn} 1s ease-in 1.5s forwards;
+	opacity: ${isTestEnvironment ? 1 : 0};
+	animation: ${isTestEnvironment
+		? 'none'
+		: `${fadeIn} 1s ease-in 1.5s forwards`};
 
 	&:hover {
 		background-color: #17a74a;
@@ -80,8 +84,10 @@ export const About = styled.div`
 	color: #2d3436;
 	line-height: 1.6;
 	text-align: center;
-	opacity: 0;
-	animation: ${fadeIn} 1s ease-in 1.5s forwards;
+	opacity: ${isTestEnvironment ? 1 : 0};
+	animation: ${isTestEnvironment
+		? 'none'
+		: `${fadeIn} 1s ease-in 1.5s forwards`};
 
 	p {
 		margin-bottom: 15px;
@@ -99,6 +105,8 @@ export const SectionHeading = styled.h2`
 	margin: 20px 0 10px;
 	font-weight: 600;
 	text-align: center;
-	opacity: 0;
-	animation: ${fadeIn} 1s ease-in 1.5s forwards;
+	opacity: ${isTestEnvironment ? 1 : 0};
+	animation: ${isTestEnvironment
+		? 'none'
+		: `${fadeIn} 1s ease-in 1.5s forwards`};
 `;
