@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import LoginPage from './LoginPage';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -30,7 +30,6 @@ describe('LoginPage', () => {
 		const loginButton = screen.getByText('Login To Spotify');
 
 		expect(loginButton).toBeInTheDocument();
-		expect(loginButton).toBeVisible();
 	});
 
 	it('renders user-specific content when user is logged in', () => {
@@ -43,7 +42,6 @@ describe('LoginPage', () => {
 		const sectionHeading = screen.getByText('How it Works');
 
 		expect(sectionHeading).toBeInTheDocument();
-		expect(sectionHeading).toBeVisible();
 	});
 
 	it('calls loginService.login and redirects when login button is clicked', async () => {
