@@ -1,9 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import HomePage from './HomePage';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../reducers/authReducer';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 const renderWithStore = (ui, { preloadedState } = {}) => {
 	const store = configureStore({
@@ -13,6 +13,10 @@ const renderWithStore = (ui, { preloadedState } = {}) => {
 
 	return render(<Provider store={store}>{ui}</Provider>);
 };
+
+afterEach(() => {
+	global.open = window.open;
+});
 
 describe('HomePage', () => {
 	it('renders user-specific content when user is logged in', () => {
@@ -97,6 +101,71 @@ describe('HomePage', () => {
 		expect(
 			screen.getByText('Track 2 - Artist 3, Artist 4')
 		).toBeInTheDocument();
+	});
+
+	it('redirects to the artist url when clicked', () => {
+		const mockOpen = vi.fn();
+		global.open = mockOpen;
+
+		renderWithStore(<HomePage />, {
+			preloadedState: {
+				auth: {
+					user: {
+						user: {
+							displayName: 'Test User',
+							profileImage: 'https://example.com/profile.jpg',
+						},
+						topArtists: [
+							{
+								id: '1',
+								name: 'Artist 1',
+								url: 'https://artist1.com',
+							},
+						],
+						topGenres: [],
+						topTracks: [],
+					},
+				},
+			},
+		});
+
+		const artistLink = screen.getByText('Artist 1');
+		expect(artistLink).toBeInTheDocument();
+		fireEvent.click(artistLink);
+		expect(mockOpen).toHaveBeenCalledWith('https://artist1.com', '_blank');
+	});
+
+	it('redirects to the track url when clicked', () => {
+		const mockOpen = vi.fn();
+		global.open = mockOpen;
+
+		renderWithStore(<HomePage />, {
+			preloadedState: {
+				auth: {
+					user: {
+						user: {
+							displayName: 'Test User',
+							profileImage: 'https://example.com/profile.jpg',
+						},
+						topArtists: [],
+						topGenres: [],
+						topTracks: [
+							{
+								id: '1',
+								name: 'Track 1',
+								artists: ['Artist 1'],
+								url: 'https://track1.com',
+							},
+						],
+					},
+				},
+			},
+		});
+
+		const trackLink = screen.getByText('Track 1 - Artist 1');
+		expect(trackLink).toBeInTheDocument();
+		fireEvent.click(trackLink);
+		expect(mockOpen).toHaveBeenCalledWith('https://track1.com', '_blank');
 	});
 
 	it('renders a message when no top data is available', () => {
