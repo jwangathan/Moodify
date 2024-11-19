@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components';
 
 const fadeIn = keyframes`
 	from {
-		opacity: 0;
+		opacity:  0;
 		transform: translateY(20px);
 	}
 
@@ -34,7 +34,6 @@ export const Title = styled.div`
 		font-size: 2.5rem;
 	}
 	opacity: 0;
-
 	animation: ${fadeIn} 1s ease-in 0.5s forwards;
 `;
 
